@@ -6,7 +6,7 @@ namespace MU3Input
 {
     public static class Mu3Io
     {
-        internal static HidIO Io;
+        internal static IO Io;
         private static IOTest _test;
 
         [DllExport(ExportName = "mu3_io_get_api_version")]
@@ -23,7 +23,7 @@ namespace MU3Input
                 Process.GetCurrentProcess().ProcessName != "Test")
                 return 0;
 
-            Io = new HidIO();
+            Io = new TcpIO();
             _test = new IOTest(Io);
 
             Task.Run(() => _test.ShowDialog());

@@ -6,12 +6,12 @@ namespace MU3Input
 {
     public partial class IOTest : Form
     {
-        private HidIO _io;
+        private IO _io;
 
         private CheckBox[] _left;
         private CheckBox[] _right;
 
-        public IOTest(HidIO io)
+        public IOTest(IO io)
         {
             InitializeComponent();
 
