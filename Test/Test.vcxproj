@@ -44,7 +44,7 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>C:\Users\GEEKiDoS\source\repos\MU3Input\MU3Input\bin\x64\Debug\</OutDir>
+    <OutDir>F:\repositories\ongeki-io\MU3Input\bin\x64\Debug\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

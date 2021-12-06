@@ -23,10 +23,10 @@ namespace MU3Input
 
         public override bool IsConnected => client?.Connected ?? false;
 
-        public override void Reconnect()
+        public override async void Reconnect()
         {
             CloseClient();
-            client = listener.AcceptTcpClientAsync().Result;
+            client =await listener.AcceptTcpClientAsync();
             networkStream = client.GetStream();
             new Thread(PollThread).Start();
         }

@@ -20,6 +20,7 @@ namespace MU3Input
         {
             if (Process.GetCurrentProcess().ProcessName != "amdaemon" &&
                 Process.GetCurrentProcess().ProcessName != "Debug" &&
+                Process.GetCurrentProcess().ProcessName != "TestSharp" &&
                 Process.GetCurrentProcess().ProcessName != "Test")
                 return 0;
 
