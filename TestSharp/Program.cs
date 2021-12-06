@@ -12,7 +12,7 @@ namespace TestSharp
     {
         static void Main(string[] args)
         {
-            Mu3Io.Init();
+            Mu3IO.Init();
             Console.ReadKey();
         }
     }

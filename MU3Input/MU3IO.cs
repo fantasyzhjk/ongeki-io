@@ -4,10 +4,10 @@ using System.Diagnostics;
 
 namespace MU3Input
 {
-    public static class Mu3Io
+    public static class Mu3IO
     {
         internal static IO Io;
-        private static IOTest _test;
+        public static IOTest _test;
 
         [DllExport(ExportName = "mu3_io_get_api_version")]
         public static ushort GetVersion()

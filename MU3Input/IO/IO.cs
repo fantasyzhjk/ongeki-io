@@ -1,11 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MU3Input
 {
+    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 64)]
+    public struct OutputData
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10, ArraySubType = UnmanagedType.U1)]
+        public byte[] Buttons;
+
+        public ushort Lever;
+        [MarshalAs(UnmanagedType.U1)] public bool Scan;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public byte[] AimiId;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 64)]
+    public unsafe struct SetLedInput
+    {
+        public byte Type;
+        public byte LedBrightness;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public fixed byte LedColors[3 * 10];
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 64)]
+    public unsafe struct SetOptionInput
+    {
+        public byte Type;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public fixed byte AimiId[10];
+    }
     public abstract class IO
     {
         protected OutputData _data;

@@ -26,7 +26,7 @@ namespace MU3Input
         public override async void Reconnect()
         {
             CloseClient();
-            client =await listener.AcceptTcpClientAsync();
+            client = await listener.AcceptTcpClientAsync();
             networkStream = client.GetStream();
             new Thread(PollThread).Start();
         }
@@ -49,12 +49,14 @@ namespace MU3Input
                     continue;
                 IAsyncResult result = networkStream.BeginRead(_inBuffer, 0, 64, new AsyncCallback((res) => { }), null);
                 int len = networkStream.EndRead(result);
-                if (len < 0)
+                if (len <= 0)
                 {
                     CloseClient();
                     return;
                 }
                 _data = _inBuffer.ToStructure<OutputData>();
+                // 用于直接打开测试显示按键
+                Mu3IO._test.UpdateData();
             }
         }
 

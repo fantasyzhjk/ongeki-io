@@ -40,9 +40,9 @@ namespace MU3Input
         [DllExport(CallingConvention = CallingConvention.Cdecl, ExportName = "aime_io_nfc_get_aime_id")]
         public static uint GetAimeId(byte unitNumber, IntPtr id, ulong size)
         {
-            if (Mu3Io.Io == null || !Mu3Io.Io.Scan) return 1;
+            if (Mu3IO.Io == null || !Mu3IO.Io.Scan) return 1;
             
-            Marshal.Copy(Mu3Io.Io.AimiId, 0, id, 10);
+            Marshal.Copy(Mu3IO.Io.AimiId, 0, id, 10);
             
             return 0;
         }

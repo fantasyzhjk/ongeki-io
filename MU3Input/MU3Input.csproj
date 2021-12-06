@@ -68,7 +68,7 @@
     <Compile Include="AimiIO.cs" />
     <Compile Include="IO\HidIO.cs" />
     <Compile Include="IO\IO.cs" />
-    <Compile Include="MU3IO.cs" />
+    <Compile Include="Mu3IO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IOTest.cs">
       <SubType>Form</SubType>
