@@ -13,6 +13,11 @@ namespace TestSharp
         static void Main(string[] args)
         {
             Mu3IO.Init();
+            while (true)
+            {
+                Task.Delay(1000).Wait();
+                Mu3IO.Poll();
+            }
             Console.ReadKey();
         }
     }
