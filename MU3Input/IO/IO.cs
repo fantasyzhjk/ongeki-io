@@ -13,7 +13,7 @@ namespace MU3Input
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10, ArraySubType = UnmanagedType.U1)]
         public byte[] Buttons;
 
-        public ushort Lever;
+        public short Lever;
         [MarshalAs(UnmanagedType.U1)] public bool Scan;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
@@ -62,8 +62,7 @@ namespace MU3Input
         {
             get
             {
-                var value = Math.Pow(_data.Lever / 1023.0, 0.4545) - 0.5;
-                return (short)(value * 32766);
+                return _data.Lever;
             }
         }
 

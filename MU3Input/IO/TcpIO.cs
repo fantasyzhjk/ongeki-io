@@ -15,19 +15,23 @@ namespace MU3Input
         NetworkStream networkStream;
         public TcpIO()
         {
-            IPAddress ip = new IPAddress(new byte[] { 127, 0, 0, 1 });
+            _data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
+            IPAddress ip = new IPAddress(new byte[] { 0, 0, 0, 0 });
             listener = new TcpListener(ip, port);
             listener.Start();
             Reconnect();
         }
 
         public override bool IsConnected => client?.Connected ?? false;
-
+        bool connecting = false;
         public override async void Reconnect()
         {
+            if (connecting) return;
+            connecting = true;
             CloseClient();
             client = await listener.AcceptTcpClientAsync();
             networkStream = client.GetStream();
+            connecting = false;
             new Thread(PollThread).Start();
         }
         private void CloseClient()
@@ -46,7 +50,10 @@ namespace MU3Input
             while (true)
             {
                 if (!IsConnected)
+                {
+                    Reconnect();
                     continue;
+                }
                 IAsyncResult result = networkStream.BeginRead(_inBuffer, 0, 64, new AsyncCallback((res) => { }), null);
                 int len = networkStream.EndRead(result);
                 if (len <= 0)
@@ -55,8 +62,8 @@ namespace MU3Input
                     return;
                 }
                 _data = _inBuffer.ToStructure<OutputData>();
-                // 用于直接打开测试显示按键
-                Mu3IO._test.UpdateData();
+                //// 用于直接打开测试显示按键
+                //Mu3IO._test.UpdateData();
             }
         }
 

@@ -81,19 +81,19 @@
     <Compile Include="Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DllExport">
-      <Version>1.7.4</Version>
-      <Visible>false</Visible>
-      <Wz>1</Wz>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="IOTest.resx">
       <DependentUpon>IOTest.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DllExport">
+      <Version>1.7.4</Version>
+      <Visible>false</Visible>
+      <Wz>1</Wz>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ImportGroup Label=".NET DllExport">
