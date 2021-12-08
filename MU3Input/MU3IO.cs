@@ -7,7 +7,7 @@ namespace MU3Input
     public static class Mu3IO
     {
         internal static IO Io;
-        //public static IOTest _test;
+        public static IOTest _test;
 
         [DllExport(ExportName = "mu3_io_get_api_version")]
         public static ushort GetVersion()
@@ -25,9 +25,9 @@ namespace MU3Input
                 return 0;
 
             Io = new TcpIO();
-            //_test = new IOTest(Io);
+            _test = new IOTest(Io);
 
-            //Task.Run(() => _test.ShowDialog());
+            Task.Run(() => _test.ShowDialog());
             return 0;
         }
 
@@ -42,7 +42,7 @@ namespace MU3Input
                 Io.Reconnect();
             }
 
-            //_test.UpdateData();
+            _test.UpdateData();
             return 0;
         }
 
@@ -82,7 +82,7 @@ namespace MU3Input
         [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_set_led")]
         public static void SetLed(uint data)
         {
-            //_test.SetColor(data);
+            _test.SetColor(data);
             Io.SetLed(data);
         }
     }

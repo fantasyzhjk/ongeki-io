@@ -12,6 +12,7 @@ namespace MU3Input
     public class TcpIO : IO
     {
         const int defaultPort = 4354;
+        uint currentLedData = 0;
         TcpListener listener;
         TcpClient client;
         NetworkStream networkStream;
@@ -66,6 +67,7 @@ namespace MU3Input
             client = newClient;
             networkStream = client.GetStream();
             connecting = false;
+            SetLed(currentLedData);
         }
         private void Disconnect()
         {
@@ -99,16 +101,12 @@ namespace MU3Input
                 //Mu3IO._test.UpdateData();
             }
         }
-
-        public static int[] bitPosMap =
-        {
-            23, 19, 22, 20, 21, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6
-        };
-
         public override unsafe void SetLed(uint data)
         {
             try
             {
+                // 缓存led数据将其设置到新连接的设备
+                currentLedData = data;
                 if (!IsConnected)
                     return;
                 networkStream.Write(BitConverter.GetBytes(data), 0, 4);
@@ -120,20 +118,22 @@ namespace MU3Input
         }
         public override unsafe void SetAimiId(byte[] id)
         {
-            if (!IsConnected)
-                return;
+            return;
+            // 正常游戏无需实现也不会使用
+            //if (!IsConnected)
+            //    return;
 
-            SetOptionInput input;
-            input.Type = 1;
+            //SetOptionInput input;
+            //input.Type = 1;
 
-            fixed (void* src = id)
-                CopyMemory(input.AimiId, src, 10);
+            //fixed (void* src = id)
+            //    CopyMemory(input.AimiId, src, 10);
 
-            var outBuffer = new byte[64];
-            fixed (void* d = outBuffer)
-                CopyMemory(d, &input, 64);
+            //var outBuffer = new byte[64];
+            //fixed (void* d = outBuffer)
+            //    CopyMemory(d, &input, 64);
 
-            networkStream.Write(outBuffer, 0, outBuffer.Length);
+            //networkStream.Write(outBuffer, 0, outBuffer.Length);
         }
         [DllImport("kernel32")]//返回取得字符串缓冲区的长度
         private static extern long GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
