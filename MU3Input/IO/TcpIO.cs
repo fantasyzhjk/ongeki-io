@@ -79,7 +79,7 @@ namespace MU3Input
                 networkStream = null;
             }
         }
-        private byte[] _inBuffer = new byte[23];
+        private byte[] _inBuffer = new byte[24];
         private void PollThread()
         {
             while (true)
@@ -89,7 +89,7 @@ namespace MU3Input
                     connectTask?.Wait();
                     continue;
                 }
-                IAsyncResult result = networkStream.BeginRead(_inBuffer, 0, 23, new AsyncCallback((res) => { }), null);
+                IAsyncResult result = networkStream.BeginRead(_inBuffer, 0, _inBuffer.Length, new AsyncCallback((res) => { }), null);
                 int len = networkStream.EndRead(result);
                 if (len <= 0)
                 {

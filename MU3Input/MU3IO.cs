@@ -49,7 +49,13 @@ namespace MU3Input
         [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_get_opbtns")]
         public static void GetOpButtons(out byte opbtn)
         {
-            opbtn = 0;
+            if (Io == null || !Io.IsConnected)
+            {
+                opbtn = 0;
+                return;
+            }
+
+            opbtn = Io.OptButton;
         }
 
         [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_get_gamebtns")]
