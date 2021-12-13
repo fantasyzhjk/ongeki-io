@@ -136,8 +136,6 @@ namespace MU3Input
             //networkStream.Write(outBuffer, 0, outBuffer.Length);
         }
         [DllImport("kernel32")]//返回取得字符串缓冲区的长度
-        private static extern long GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
-        [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
-        private static extern unsafe void CopyMemory(void* dest, void* src, int count);
+        public static extern long GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
     }
 }

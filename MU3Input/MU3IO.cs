@@ -24,7 +24,7 @@ namespace MU3Input
                 Process.GetCurrentProcess().ProcessName != "Test")
                 return 0;
 
-            Io = new TcpIO();
+            Io = new UdpIO();
             _test = new IOTest(Io);
 
             Task.Run(() => _test.ShowDialog());
