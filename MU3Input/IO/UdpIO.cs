@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -23,8 +24,8 @@ namespace MU3Input
             client = new UdpClient(port);
             new Thread(PollThread).Start();
         }
-        // 不需要长连接
-        public override bool IsConnected => true;
+        bool isConnected = false;
+        public override bool IsConnected => isConnected;
         public override void Reconnect() { }
 
         private void PollThread()
@@ -32,11 +33,8 @@ namespace MU3Input
             while (true)
             {
                 byte[] buffer = client?.Receive(ref remoteEP);
-                // 如果是一个新连接则记录，并发送颜色数据
-                if (remoteEP != savedEP)
-                {
-                    savedEP = new IPEndPoint(remoteEP.Address, remoteEP.Port);
-                }
+                // 如果已连接设备但收到了其他设备的消息则忽略
+                if (IsConnected && (remoteEP.Address.Address != savedEP.Address.Address)) return;
                 ParseBuffer(buffer);
             }
         }
@@ -57,21 +55,50 @@ namespace MU3Input
             else if (buffer[0] == (byte)MessageType.Scan && buffer.Length == 12)
             {
                 _data.Scan = buffer[1] > 0;
-                _data.AimiId = new ArraySegment<byte>(buffer, 2, 10).ToArray();
+                byte[] aimeId = new ArraySegment<byte>(buffer, 2, 10).ToArray();
+                if (aimeId.All(n => n == 0))
+                {
+                    var location = this.GetType().Assembly.Location;
+                    string directoryName = Path.GetDirectoryName(location);
+                    string deviceDirectory = Path.Combine(directoryName, "DEVICE");
+                    string aimeIdPath = Path.Combine(deviceDirectory, "aime.txt");
+                    try
+                    {
+                        var id = BigInteger.Parse(File.ReadAllText(aimeIdPath));
+                        var bytes = id.ToByteArray();
+                        aimeId = new byte[10 - bytes.Length].Concat(bytes).ToArray();
+                    }
+                    catch (Exception ex)
+                    {
+                        Random random = new Random();
+                        random.NextBytes(aimeId);
+                        var id = new BigInteger(aimeId);
+                        if (id < -1) id = -(id + 1);
+                        id = id % BigInteger.Parse("999,999,999,999,999,999,99");
+                        if (!Directory.Exists(deviceDirectory))
+                        {
+                            Directory.CreateDirectory(deviceDirectory);
+                        }
+                        File.WriteAllText(aimeIdPath, id.ToString());
+                    }
+                }
+                _data.AimiId = aimeId;
             }
             else if (buffer[0] == (byte)MessageType.Test && buffer.Length == 2)
             {
                 _data.OptButton = buffer[1];
             }
-            else if (buffer[0] == (byte)MessageType.RequestColors && buffer.Length == 1)
+            else if (buffer[0] == (byte)MessageType.RequestValues && buffer.Length == 1)
             {
                 SetLed(currentLedData);
                 SetLever(_data.Lever);
             }
-            // 收到心跳数据直接回传原数据表示在线
+            // 收到心跳数据直接回传原数据表示在线，并保存其地址阻止其他设备连接
             else if (buffer[0] == (byte)MessageType.DokiDoki && buffer.Length == 2)
             {
+                savedEP = new IPEndPoint(remoteEP.Address, remoteEP.Port);
                 client.SendAsync(buffer, 2, savedEP);
+                isConnected = true;
             }
         }
 
@@ -103,11 +130,11 @@ namespace MU3Input
             MoveLever = 2,
             Scan = 3,
             Test = 4,
-            RequestColors = 5,
+            RequestValues = 5,
             // IO向控制器发送的
             SetLed = 6,
             SetLever = 7,
-            // 检测连接状态(
+            // 寻找在线设备
             DokiDoki = 255
         }
     }

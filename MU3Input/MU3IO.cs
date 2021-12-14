@@ -105,6 +105,7 @@ namespace MU3Input
         }
 
         const string defaultIOType = "hid";
+
         public static string GetProtocol()
         {
             var location = typeof(Mu3IO).Assembly.Location;
