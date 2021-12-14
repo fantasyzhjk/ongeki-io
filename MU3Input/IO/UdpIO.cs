@@ -66,11 +66,20 @@ namespace MU3Input
             else if (buffer[0] == (byte)MessageType.RequestColors && buffer.Length == 1)
             {
                 SetLed(currentLedData);
+                SetLever(_data.Lever);
             }
             // 收到心跳数据直接回传原数据表示在线
             else if (buffer[0] == (byte)MessageType.DokiDoki && buffer.Length == 2)
             {
                 client.SendAsync(buffer, 2, savedEP);
+            }
+        }
+
+        private void SetLever(short lever)
+        {
+            if (savedEP != null)
+            {
+                client?.SendAsync(new byte[] { (byte)MessageType.SetLever }.Concat(BitConverter.GetBytes(lever)).ToArray(), 3, savedEP);
             }
         }
 
@@ -97,7 +106,8 @@ namespace MU3Input
             RequestColors = 5,
             // IO向控制器发送的
             SetLed = 6,
-            // 心跳检测连接状态(
+            SetLever = 7,
+            // 检测连接状态(
             DokiDoki = 255
         }
     }

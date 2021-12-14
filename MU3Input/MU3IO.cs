@@ -27,7 +27,7 @@ namespace MU3Input
                 Process.GetCurrentProcess().ProcessName != "Test")
                 return 0;
 
-            switch (GetIOType().ToLower())
+            switch (GetProtocol().ToLower())
             {
                 case "udp":
                     Io = new UdpIO(GetPort());
@@ -105,7 +105,7 @@ namespace MU3Input
         }
 
         const string defaultIOType = "hid";
-        public static string GetIOType()
+        public static string GetProtocol()
         {
             var location = typeof(Mu3IO).Assembly.Location;
             string directoryName = Path.GetDirectoryName(location);
