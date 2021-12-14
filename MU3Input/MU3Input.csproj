@@ -79,7 +79,6 @@
       <DependentUpon>IOTest.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleRawHid.cs" />
-    <Compile Include="IO\TcpIO.cs" />
     <Compile Include="Extensions.cs" />
   </ItemGroup>
   <ItemGroup>

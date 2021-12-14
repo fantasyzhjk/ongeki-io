@@ -13,32 +13,15 @@ namespace MU3Input
 {
     public class UdpIO : IO
     {
-        const int defaultPort = 4354;
         uint currentLedData = 0;
         UdpClient client;
         IPEndPoint savedEP;
         IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
-        public UdpIO()
+        public UdpIO(int port)
         {
             _data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
-            client = new UdpClient(GetPort());
+            client = new UdpClient(port);
             new Thread(PollThread).Start();
-        }
-        public int GetPort()
-        {
-            var location = GetType().Assembly.Location;
-            string directoryName = Path.GetDirectoryName(location);
-            string segatoolsIniPath = Path.Combine(directoryName, "segatools.ini");
-            if (File.Exists(segatoolsIniPath))
-            {
-                StringBuilder temp = new StringBuilder();
-                TcpIO.GetPrivateProfileString("mu3io", "port", defaultPort.ToString(), temp, 1024, segatoolsIniPath);
-                if (int.TryParse(temp.ToString(), out int port))
-                {
-                    return port;
-                }
-            }
-            return defaultPort;
         }
         // 不需要长连接
         public override bool IsConnected => true;
@@ -117,8 +100,5 @@ namespace MU3Input
             // 心跳检测连接状态(
             DokiDoki = 255
         }
-        //VS谜之抽风在这个类导入GetPrivateProfileString无法编译
-        //[DllImport("kernel32")]//返回取得字符串缓冲区的长度
-        //private static extern long GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
     }
 }
