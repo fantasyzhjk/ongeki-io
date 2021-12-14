@@ -65,7 +65,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AimiIO.cs" />
+    <Compile Include="AimeIO.cs" />
     <Compile Include="IO\HidIO.cs" />
     <Compile Include="IO\IO.cs" />
     <Compile Include="IO\UdpIO.cs" />
