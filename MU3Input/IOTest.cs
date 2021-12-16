@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Numerics;
 using System.Windows.Forms;
 
 namespace MU3Input
@@ -65,7 +66,7 @@ namespace MU3Input
 
                     if (_io.Scan)
                     {
-                        textAimiId.Text = BitConverter.ToString(_io.AimiId).Replace("-", "");
+                        textAimiId.Text = new BigInteger(_io.AimiId).ToString("D20");
                     }
                 }));
             }
