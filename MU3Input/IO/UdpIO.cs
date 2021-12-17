@@ -71,14 +71,17 @@ namespace MU3Input
                     catch (Exception ex)
                     {
                         Random random = new Random();
-                        random.NextBytes(aimeId);
-                        var id = new BigInteger(aimeId);
+                        byte[] temp=new byte[10];
+                        random.NextBytes(temp);
+                        var id = new BigInteger(temp);
                         if (id < -1) id = -(id + 1);
                         id = id % BigInteger.Parse("99999999999999999999");
                         if (!Directory.Exists(deviceDirectory))
                         {
                             Directory.CreateDirectory(deviceDirectory);
                         }
+                        var bytes = ToBcd(id);
+                        aimeId = new byte[10 - bytes.Length].Concat(bytes).ToArray();
                         File.WriteAllText(aimeIdPath, id.ToString());
                     }
                 }
