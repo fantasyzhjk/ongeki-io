@@ -66,7 +66,7 @@ namespace MU3Input
 
                     if (_io.Scan)
                     {
-                        textAimiId.Text = new BigInteger(_io.AimiId).ToString("D20");
+                        textAimiId.Text = BitConverter.ToString(_io.AimiId).Replace("-", "");
                     }
                 }));
             }

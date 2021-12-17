@@ -65,7 +65,7 @@ namespace MU3Input
                     try
                     {
                         var id = BigInteger.Parse(File.ReadAllText(aimeIdPath));
-                        var bytes = id.ToByteArray();
+                        var bytes = ToBcd(id);
                         aimeId = bytes.Concat(new byte[10 - bytes.Length]).ToArray();
                     }
                     catch (Exception ex)
@@ -74,7 +74,7 @@ namespace MU3Input
                         random.NextBytes(aimeId);
                         var id = new BigInteger(aimeId);
                         if (id < -1) id = -(id + 1);
-                        id = id % BigInteger.Parse("999,999,999,999,999,999,99");
+                        id = id % BigInteger.Parse("99999999999999999999");
                         if (!Directory.Exists(deviceDirectory))
                         {
                             Directory.CreateDirectory(deviceDirectory);
@@ -101,7 +101,19 @@ namespace MU3Input
                 isConnected = true;
             }
         }
-
+        public static byte[] ToBcd(BigInteger value)
+        {
+            var length = value.ToString().Length / 2 + value.ToString().Length % 2;
+            byte[] ret = new byte[length];
+            for (int i = length - 1; i >= 0; i--)
+            {
+                ret[i] = (byte)(value % 10);
+                value /= 10;
+                ret[i] |= (byte)((value % 10) << 4);
+                value /= 10;
+            }
+            return ret;
+        }
         private void SetLever(short lever)
         {
             if (savedEP != null)
