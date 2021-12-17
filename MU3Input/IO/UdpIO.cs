@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace MU3Input
 {
@@ -18,12 +19,25 @@ namespace MU3Input
         UdpClient client;
         IPEndPoint savedEP;
         IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
+        System.Timers.Timer timer = new System.Timers.Timer(1500)
+        {
+            AutoReset = false
+        };
         public UdpIO(int port)
         {
             _data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
             client = new UdpClient(port);
+            timer.Elapsed += Timer_Elapsed;
             new Thread(PollThread).Start();
         }
+
+        // 一段时间没收到心跳包自动断开以接受新的连接
+        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            isConnected = false;
+            savedEP = null;
+        }
+
         bool isConnected = false;
         public override bool IsConnected => isConnected;
         public override void Reconnect() { }
@@ -102,6 +116,8 @@ namespace MU3Input
                 savedEP = new IPEndPoint(remoteEP.Address, remoteEP.Port);
                 client.SendAsync(buffer, 2, savedEP);
                 isConnected = true;
+                timer.Stop();
+                timer.Start();
             }
         }
         public static byte[] ToBcd(BigInteger value)
