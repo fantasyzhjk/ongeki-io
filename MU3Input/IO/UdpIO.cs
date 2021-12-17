@@ -56,7 +56,7 @@ namespace MU3Input
             {
                 _data.Scan = buffer[1] > 0;
                 byte[] aimeId = new ArraySegment<byte>(buffer, 2, 10).ToArray();
-                if (aimeId.All(n => n == 0))
+                if (aimeId.All(n => n == 255))
                 {
                     var location = this.GetType().Assembly.Location;
                     string directoryName = Path.GetDirectoryName(location);
@@ -66,7 +66,7 @@ namespace MU3Input
                     {
                         var id = BigInteger.Parse(File.ReadAllText(aimeIdPath));
                         var bytes = ToBcd(id);
-                        aimeId = bytes.Concat(new byte[10 - bytes.Length]).ToArray();
+                        aimeId = new byte[10 - bytes.Length].Concat(bytes).ToArray();
                     }
                     catch (Exception ex)
                     {
