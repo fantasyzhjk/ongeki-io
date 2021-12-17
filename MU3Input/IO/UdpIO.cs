@@ -66,7 +66,7 @@ namespace MU3Input
                     {
                         var id = BigInteger.Parse(File.ReadAllText(aimeIdPath));
                         var bytes = id.ToByteArray();
-                        aimeId = new byte[10 - bytes.Length].Concat(bytes).ToArray();
+                        aimeId = bytes.Concat(new byte[10 - bytes.Length]).ToArray();
                     }
                     catch (Exception ex)
                     {
