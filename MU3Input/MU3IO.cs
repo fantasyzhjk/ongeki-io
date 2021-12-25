@@ -67,7 +67,7 @@ namespace MU3Input
                 return;
             }
 
-            opbtn = Io.OptButton;
+            opbtn = (byte)Io.OptButtonsStatus;
         }
 
         [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_get_gamebtns")]

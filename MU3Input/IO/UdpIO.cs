@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -103,7 +104,15 @@ namespace MU3Input
             }
             else if (buffer[0] == (byte)MessageType.Test && buffer.Length == 2)
             {
-                _data.OptButton = buffer[1];
+                if (buffer[1] == 0) _data.OptButton^=OptButtons.Test;
+                else _data.OptButton |= OptButtons.Test;
+                Debug.WriteLine(_data.OptButton);
+            }
+            else if (buffer[0] == (byte)MessageType.Service && buffer.Length == 2)
+            {
+                if (buffer[1] == 0) _data.OptButton ^= OptButtons.Service;
+                else _data.OptButton |= OptButtons.Service;
+                Debug.WriteLine(_data.OptButton);
             }
             else if (buffer[0] == (byte)MessageType.RequestValues && buffer.Length == 1)
             {
@@ -165,6 +174,7 @@ namespace MU3Input
             // IO向控制器发送的
             SetLed = 6,
             SetLever = 7,
+            Service = 8,
             // 寻找在线设备
             DokiDoki = 255
         }

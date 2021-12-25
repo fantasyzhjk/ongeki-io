@@ -18,7 +18,7 @@ namespace MU3Input
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public byte[] AimiId;
-        public byte OptButton;
+        public OptButtons OptButton;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 64)]
@@ -70,11 +70,17 @@ namespace MU3Input
         public bool Scan => _data.Scan;
 
         public byte[] AimiId => _data.AimiId;
-        public byte OptButton => _data.OptButton;
+        public OptButtons OptButtonsStatus => _data.OptButton;
 
         public abstract bool IsConnected { get; }
         public abstract void Reconnect();
         public abstract void SetLed(uint data);
         public abstract void SetAimiId(byte[] id);
+    }
+    [Flags]
+    public enum OptButtons : byte
+    {
+        Test = 0b01,
+        Service = 0b10
     }
 }

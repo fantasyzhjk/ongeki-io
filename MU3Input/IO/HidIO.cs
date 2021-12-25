@@ -18,6 +18,7 @@ namespace MU3Input
 
         public HidIO()
         {
+            _data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
             Reconnect();
             new Thread(PollThread).Start();
         }
