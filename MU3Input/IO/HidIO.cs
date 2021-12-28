@@ -57,11 +57,26 @@ namespace MU3Input
             }
         }
 
-        public override void SetLed(uint data)
+        public unsafe override void SetLed(uint data)
         {
             if (!IsConnected)
                 return;
-            _hid.Send(0, BitConverter.GetBytes(data), sizeof(uint), 1000);
+
+            SetLedInput led;
+            led.Type = 0;
+            led.LedBrightness = 40;
+
+            for (var i = 0; i < 9; i++)
+            {
+                led.LedColors[i] = (byte)(((data >> bitPosMap[i]) & 1) * 255);
+                led.LedColors[i + 15] = (byte)(((data >> bitPosMap[i + 9]) & 1) * 255);
+            }
+
+            var outBuffer = new byte[64];
+            fixed (void* d = outBuffer)
+                CopyMemory(d, &led, 64);
+
+            _hid.Send(0, outBuffer, 64, 1000);
         }
 
         public override unsafe void SetAimiId(byte[] id)
