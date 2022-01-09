@@ -27,10 +27,10 @@ namespace MU3Input
                 Process.GetCurrentProcess().ProcessName != "Test")
                 return 0;
 
-            switch (GetProtocol().ToLower())
+            switch (Utils.GetProtocol().ToLower())
             {
                 case "udp":
-                    Io = new UdpIO(GetPort());
+                    Io = new UdpIO(Utils.GetPort());
                     break;
                 default:
                     Io = new HidIO();
@@ -104,41 +104,6 @@ namespace MU3Input
             Io.SetLed(data);
         }
 
-        const string defaultIOType = "hid";
 
-        public static string GetProtocol()
-        {
-            var location = typeof(Mu3IO).Assembly.Location;
-            string directoryName = Path.GetDirectoryName(location);
-            string segatoolsIniPath = Path.Combine(directoryName, "segatools.ini");
-            if (File.Exists(segatoolsIniPath))
-            {
-                StringBuilder temp = new StringBuilder();
-                GetPrivateProfileString("mu3io", "protocol", defaultIOType, temp, 1024, segatoolsIniPath);
-                return temp.ToString();
-            }
-            return defaultIOType;
-        }
-
-        const int defaultPort = 4354;
-        public static int GetPort()
-        {
-            var location = typeof(Mu3IO).Assembly.Location;
-            string directoryName = Path.GetDirectoryName(location);
-            string segatoolsIniPath = Path.Combine(directoryName, "segatools.ini");
-            if (File.Exists(segatoolsIniPath))
-            {
-                StringBuilder temp = new StringBuilder();
-                GetPrivateProfileString("mu3io", "port", defaultPort.ToString(), temp, 1024, segatoolsIniPath);
-                if (int.TryParse(temp.ToString(), out int port))
-                {
-                    return port;
-                }
-            }
-            return defaultPort;
-        }
-
-        [DllImport("kernel32")]//返回取得字符串缓冲区的长度
-        public static extern long GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
     }
 }

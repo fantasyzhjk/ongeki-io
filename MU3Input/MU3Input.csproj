@@ -69,7 +69,6 @@
     <Compile Include="IO\HidIO.cs" />
     <Compile Include="IO\IO.cs" />
     <Compile Include="IO\UdpIO.cs" />
-    <Compile Include="Kernel32.cs" />
     <Compile Include="Mu3IO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IOTest.cs">
@@ -80,6 +79,7 @@
     </Compile>
     <Compile Include="SimpleRawHid.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="IOTest.resx">

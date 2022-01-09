@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -53,7 +54,13 @@ namespace MU3Input
                     continue;
                 }
 
-                _data = _inBuffer.ToStructure<OutputData>();
+                var temp = _inBuffer.ToStructure<OutputData>();
+
+                if (temp.AimiId.All(n => n == 255))
+                {
+                    temp.AimiId = Utils.ReadOrCreateAimeTxt();
+                }
+                _data = temp;
             }
         }
 
@@ -81,7 +88,7 @@ namespace MU3Input
 
         public override unsafe void SetAimiId(byte[] id)
         {
-            return;
+
             if (!IsConnected)
                 return;
 

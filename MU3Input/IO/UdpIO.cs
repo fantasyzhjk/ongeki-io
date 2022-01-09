@@ -73,38 +73,13 @@ namespace MU3Input
                 byte[] aimeId = new ArraySegment<byte>(buffer, 2, 10).ToArray();
                 if (aimeId.All(n => n == 255))
                 {
-                    var location = this.GetType().Assembly.Location;
-                    string directoryName = Path.GetDirectoryName(location);
-                    string deviceDirectory = Path.Combine(directoryName, "DEVICE");
-                    string aimeIdPath = Path.Combine(deviceDirectory, "aime.txt");
-                    try
-                    {
-                        var id = BigInteger.Parse(File.ReadAllText(aimeIdPath));
-                        var bytes = ToBcd(id);
-                        aimeId = new byte[10 - bytes.Length].Concat(bytes).ToArray();
-                    }
-                    catch (Exception ex)
-                    {
-                        Random random = new Random();
-                        byte[] temp=new byte[10];
-                        random.NextBytes(temp);
-                        var id = new BigInteger(temp);
-                        if (id < -1) id = -(id + 1);
-                        id = id % BigInteger.Parse("99999999999999999999");
-                        if (!Directory.Exists(deviceDirectory))
-                        {
-                            Directory.CreateDirectory(deviceDirectory);
-                        }
-                        var bytes = ToBcd(id);
-                        aimeId = new byte[10 - bytes.Length].Concat(bytes).ToArray();
-                        File.WriteAllText(aimeIdPath, id.ToString());
-                    }
+                    aimeId = Utils.ReadOrCreateAimeTxt();
                 }
                 _data.AimiId = aimeId;
             }
             else if (buffer[0] == (byte)MessageType.Test && buffer.Length == 2)
             {
-                if (buffer[1] == 0) _data.OptButton^=OptButtons.Test;
+                if (buffer[1] == 0) _data.OptButton ^= OptButtons.Test;
                 else _data.OptButton |= OptButtons.Test;
                 Debug.WriteLine(_data.OptButton);
             }
