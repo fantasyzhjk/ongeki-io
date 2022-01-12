@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MU3Input
 {
@@ -53,7 +50,7 @@ namespace MU3Input
             if (File.Exists(segatoolsIniPath))
             {
                 StringBuilder temp = new StringBuilder();
-                Utils.GetPrivateProfileString("mu3io", "protocol", defaultIOType, temp, 1024, segatoolsIniPath);
+                Kernel32.GetPrivateProfileString("mu3io", "protocol", defaultIOType, temp, 1024, segatoolsIniPath);
                 return temp.ToString();
             }
             return defaultIOType;
@@ -68,7 +65,7 @@ namespace MU3Input
             if (File.Exists(segatoolsIniPath))
             {
                 StringBuilder temp = new StringBuilder();
-                Utils.GetPrivateProfileString("mu3io", "port", defaultPort.ToString(), temp, 1024, segatoolsIniPath);
+                Kernel32.GetPrivateProfileString("mu3io", "port", defaultPort.ToString(), temp, 1024, segatoolsIniPath);
                 if (int.TryParse(temp.ToString(), out int port))
                 {
                     return port;
@@ -76,7 +73,5 @@ namespace MU3Input
             }
             return defaultPort;
         }
-        [DllImport("kernel32")]//返回取得字符串缓冲区的长度
-        public static extern long GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
     }
 }

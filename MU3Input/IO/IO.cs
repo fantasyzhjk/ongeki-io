@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MU3Input
 {
@@ -75,7 +71,6 @@ namespace MU3Input
         public abstract bool IsConnected { get; }
         public abstract void Reconnect();
         public abstract void SetLed(uint data);
-        public abstract void SetAimiId(byte[] id);
     }
     [Flags]
     public enum OptButtons : byte

@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 
 namespace MU3Input
 {
@@ -132,11 +126,6 @@ namespace MU3Input
             {
                 client?.SendAsync(new byte[] { (byte)MessageType.SetLed }.Concat(BitConverter.GetBytes(data)).ToArray(), 5, savedEP);
             }
-        }
-        public override unsafe void SetAimiId(byte[] id)
-        {
-            // 正常游戏无需实现也不会使用
-            return;
         }
         enum MessageType : byte
         {

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
+﻿using SimpleHID.Raw;
 
-using SimpleHID.Raw;
+using System.Linq;
+using System.Threading;
 
 namespace MU3Input
 {
@@ -81,32 +79,11 @@ namespace MU3Input
 
             var outBuffer = new byte[64];
             fixed (void* d = outBuffer)
-                CopyMemory(d, &led, 64);
+                Kernel32.CopyMemory(d, &led, 64);
 
             _hid.Send(0, outBuffer, 64, 1000);
         }
 
-        public override unsafe void SetAimiId(byte[] id)
-        {
-
-            if (!IsConnected)
-                return;
-
-            SetOptionInput input;
-            input.Type = 1;
-
-            fixed (void* src = id)
-                CopyMemory(input.AimiId, src, 10);
-
-            var outBuffer = new byte[64];
-            fixed (void* d = outBuffer)
-                CopyMemory(d, &input, 64);
-
-            _hid.Send(0, outBuffer, 64, 1000);
-        }
-
-        [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
-        private static extern unsafe void CopyMemory(void* dest, void* src, int count);
 
     }
 }

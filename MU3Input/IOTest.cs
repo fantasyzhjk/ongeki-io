@@ -119,28 +119,5 @@ namespace MU3Input
                 // ignored
             }
         }
-
-        private void btnSetOption_Click(object sender, EventArgs e)
-        {
-            byte[] aimiId;
-            
-            try
-            {
-                aimiId = StringToByteArray(textAimiId.Text);
-            }
-            catch
-            {
-                MessageBox.Show("Invaild id, Id need to be a hex dump of 10 byte data.", "Error");
-                return;
-            }
-            
-            if (aimiId.Length != 10)
-            {
-                MessageBox.Show("Invaild id, Id need to be a hex dump of 10 byte data.");
-                return;
-            }
-            
-            _io.SetAimiId(aimiId);
-        }
     }
 }
