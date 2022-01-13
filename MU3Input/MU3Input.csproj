@@ -66,11 +66,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AimeIO.cs" />
+    <Compile Include="Example.cs" />
     <Compile Include="IO\HidIO.cs" />
     <Compile Include="IO\IO.cs" />
     <Compile Include="IO\UdpIO.cs" />
     <Compile Include="Kernel32.cs" />
     <Compile Include="Mu3IO.cs" />
+    <Compile Include="Overlay\LinearGradientBrush.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IOTest.cs">
       <SubType>Form</SubType>
@@ -91,10 +93,18 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Costura.Fody">
+      <Version>5.7.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="DllExport">
       <Version>1.7.4</Version>
       <Visible>false</Visible>
       <Wz>1</Wz>
+    </PackageReference>
+    <PackageReference Include="GameOverlay.Net">
+      <Version>4.3.1</Version>
     </PackageReference>
     <PackageReference Include="System.Runtime.Numerics">
       <Version>4.3.0</Version>

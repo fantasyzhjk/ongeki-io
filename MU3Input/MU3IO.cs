@@ -37,9 +37,15 @@ namespace MU3Input
                     break;
             }
 
+            GameOverlay.TimerService.EnableHighPrecisionTimers();
+
+            using (var example = new Example())
+            {
+                example.Run();
+            }
             _test = new IOTest(Io);
 
-            Task.Run(() => _test.ShowDialog());
+            //Task.Run(() => _test.ShowDialog());
             return 0;
         }
 
