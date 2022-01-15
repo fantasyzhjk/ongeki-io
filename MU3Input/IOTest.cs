@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Numerics;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MU3Input
@@ -8,6 +9,7 @@ namespace MU3Input
     public partial class IOTest : Form
     {
         private IO _io;
+        private Overlay _overlay;
 
         private CheckBox[] _left;
         private CheckBox[] _right;
@@ -33,8 +35,28 @@ namespace MU3Input
             };
 
             _io = io;
+
+            textX.Text = Initialization.Overlay.X.ToString();
+            textY.Text = Initialization.Overlay.Y.ToString();
+            textWidth.Text = Initialization.Overlay.Width.ToString();
+            textHeight.Text = Initialization.Overlay.Height.ToString();
         }
-        
+
+        public bool OverlayVisible
+        {
+            get => _overlay?.Visible ?? false;
+            set
+            {
+                if (_overlay == null && int.TryParse(textX.Text, out int x) && int.TryParse(textY.Text, out int y) && int.TryParse(textWidth.Text, out int width) && int.TryParse(textHeight.Text, out int height))
+                {
+                    _overlay = new Overlay(x, y, width, height);
+                    Task.Run(_overlay.Run);
+                }
+                if (_overlay == null) return;
+                _overlay.Visible = value;
+            }
+        }
+
         public static byte[] StringToByteArray(string hex)
         {
             var numberChars = hex.Length;
@@ -75,7 +97,7 @@ namespace MU3Input
                 // ignored
             }
         }
-        
+
         public void SetColor(uint data)
         {
             try
@@ -117,6 +139,35 @@ namespace MU3Input
             catch
             {
                 // ignored
+            }
+        }
+
+        private void ShowOverlay_CheckedChanged(object sender, EventArgs e)
+        {
+            if (sender is CheckBox checkBox)
+            {
+                OverlayVisible = checkBox.Checked;
+                checkBox.Checked = OverlayVisible;
+            }
+        }
+
+        private void textSize_TextChanged(object sender, EventArgs e)
+        {
+            if (int.TryParse(textWidth.Text, out int width) && int.TryParse(textHeight.Text, out int height) && int.TryParse(textX.Text, out int x) && int.TryParse(textY.Text, out int y))
+            {
+                _overlay?.SetSize(x, y, width, height);
+                Initialization.Overlay.X = x;
+                Initialization.Overlay.Y = y;
+                Initialization.Overlay.Width = width;
+                Initialization.Overlay.Height = height;
+            }
+        }
+        private void textSize_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (sender is TextBox textBox && int.TryParse(textBox.Text, out int result))
+            {
+                int delta = e.Delta > 0 ? 1 : -1;
+                textBox.Text = (result + delta).ToString();
             }
         }
     }

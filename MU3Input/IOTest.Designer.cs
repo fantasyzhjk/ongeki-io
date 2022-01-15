@@ -43,8 +43,17 @@ namespace MU3Input
             this.label5 = new System.Windows.Forms.Label();
             this.lblStatus = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.textHeight = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textWidth = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.ShowOverlay = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.textAimiId = new System.Windows.Forms.TextBox();
+            this.textX = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textY = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -184,7 +193,7 @@ namespace MU3Input
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(16, 96);
+            this.lblStatus.Location = new System.Drawing.Point(67, 75);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(77, 12);
             this.lblStatus.TabIndex = 18;
@@ -192,36 +201,132 @@ namespace MU3Input
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.textAimiId);
-            this.groupBox1.Location = new System.Drawing.Point(2, 122);
+            this.groupBox1.Controls.Add(this.textY);
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.textX);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.textHeight);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.textWidth);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.ShowOverlay);
+            this.groupBox1.Location = new System.Drawing.Point(2, 126);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(449, 116);
+            this.groupBox1.Size = new System.Drawing.Size(449, 80);
             this.groupBox1.TabIndex = 21;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Options";
+            this.groupBox1.Text = "Overlay";
+            // 
+            // textHeight
+            // 
+            this.textHeight.Location = new System.Drawing.Point(160, 48);
+            this.textHeight.MaxLength = 5;
+            this.textHeight.Name = "textHeight";
+            this.textHeight.Size = new System.Drawing.Size(42, 21);
+            this.textHeight.TabIndex = 6;
+            this.textHeight.TextChanged += new System.EventHandler(this.textSize_TextChanged);
+            this.textHeight.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.textSize_MouseWheel);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(107, 51);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(47, 12);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Height:";
+            // 
+            // textWidth
+            // 
+            this.textWidth.Location = new System.Drawing.Point(59, 48);
+            this.textWidth.MaxLength = 5;
+            this.textWidth.Name = "textWidth";
+            this.textWidth.Size = new System.Drawing.Size(42, 21);
+            this.textWidth.TabIndex = 4;
+            this.textWidth.TextChanged += new System.EventHandler(this.textSize_TextChanged);
+            this.textWidth.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.textSize_MouseWheel);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 51);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(41, 12);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Width:";
+            // 
+            // ShowOverlay
+            // 
+            this.ShowOverlay.AutoSize = true;
+            this.ShowOverlay.Location = new System.Drawing.Point(14, 20);
+            this.ShowOverlay.Name = "ShowOverlay";
+            this.ShowOverlay.Size = new System.Drawing.Size(48, 16);
+            this.ShowOverlay.TabIndex = 2;
+            this.ShowOverlay.Text = "Show";
+            this.ShowOverlay.UseVisualStyleBackColor = true;
+            this.ShowOverlay.CheckedChanged += new System.EventHandler(this.ShowOverlay_CheckedChanged);
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(14, 21);
+            this.label1.Location = new System.Drawing.Point(16, 100);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(100, 23);
+            this.label1.Size = new System.Drawing.Size(48, 23);
             this.label1.TabIndex = 1;
             this.label1.Text = "AimiID";
             // 
             // textAimiId
             // 
-            this.textAimiId.Location = new System.Drawing.Point(14, 47);
+            this.textAimiId.Location = new System.Drawing.Point(69, 97);
             this.textAimiId.Name = "textAimiId";
-            this.textAimiId.Size = new System.Drawing.Size(424, 21);
+            this.textAimiId.Size = new System.Drawing.Size(382, 21);
             this.textAimiId.TabIndex = 0;
+            // 
+            // textX
+            // 
+            this.textX.Location = new System.Drawing.Point(231, 48);
+            this.textX.MaxLength = 5;
+            this.textX.Name = "textX";
+            this.textX.Size = new System.Drawing.Size(42, 21);
+            this.textX.TabIndex = 8;
+            this.textX.TextChanged += new System.EventHandler(this.textSize_TextChanged);
+            this.textX.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.textSize_MouseWheel);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(208, 51);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(17, 12);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "X:";
+            // 
+            // textY
+            // 
+            this.textY.Location = new System.Drawing.Point(306, 48);
+            this.textY.MaxLength = 5;
+            this.textY.Name = "textY";
+            this.textY.Size = new System.Drawing.Size(42, 21);
+            this.textY.TabIndex = 10;
+            this.textY.TextChanged += new System.EventHandler(this.textSize_TextChanged);
+            this.textY.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.textSize_MouseWheel);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(280, 51);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(17, 12);
+            this.label6.TabIndex = 9;
+            this.label6.Text = "Y:";
             // 
             // IOTest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(470, 255);
+            this.ClientSize = new System.Drawing.Size(470, 218);
             this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.textAimiId);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.trackBar1);
@@ -269,5 +374,14 @@ namespace MU3Input
         
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.CheckBox ShowOverlay;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textWidth;
+        private System.Windows.Forms.TextBox textHeight;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox textY;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox textX;
+        private System.Windows.Forms.Label label4;
     }
 }

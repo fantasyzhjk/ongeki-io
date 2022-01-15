@@ -51,9 +51,8 @@ namespace MU3Input
                     Position = 1f
                 }
             };
-            BrushProperties brushProperties = new BrushProperties { Opacity = 0.5f };
             var gradientStopCollection = new GradientStopCollection(renderTarget, gradientStops);
-            _brush = new DXLinearGradientBrush(renderTarget, linearGradientBrushProperties/*, brushProperties*/, gradientStopCollection);
+            _brush = new DXLinearGradientBrush(renderTarget, linearGradientBrushProperties, gradientStopCollection);
         }
 
         ~LinearGradientBrush()

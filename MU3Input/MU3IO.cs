@@ -27,25 +27,18 @@ namespace MU3Input
                 Process.GetCurrentProcess().ProcessName != "Test")
                 return 0;
 
-            switch (Utils.GetProtocol().ToLower())
+            switch (Initialization.MU3IO.Protocol.ToLower())
             {
                 case "udp":
-                    Io = new UdpIO(Utils.GetPort());
+                    Io = new UdpIO(Initialization.MU3IO.Port);
                     break;
                 default:
                     Io = new HidIO();
                     break;
             }
 
-            GameOverlay.TimerService.EnableHighPrecisionTimers();
-
-            using (var example = new Example())
-            {
-                example.Run();
-            }
             _test = new IOTest(Io);
-
-            //Task.Run(() => _test.ShowDialog());
+            Task.Run(() => _test.ShowDialog());
             return 0;
         }
 

@@ -40,38 +40,5 @@ namespace MU3Input
             }
             return aimeId;
         }
-
-        const string defaultIOType = "hid";
-        public static string GetProtocol()
-        {
-            var location = typeof(Mu3IO).Assembly.Location;
-            string directoryName = Path.GetDirectoryName(location);
-            string segatoolsIniPath = Path.Combine(directoryName, "segatools.ini");
-            if (File.Exists(segatoolsIniPath))
-            {
-                StringBuilder temp = new StringBuilder();
-                Kernel32.GetPrivateProfileString("mu3io", "protocol", defaultIOType, temp, 1024, segatoolsIniPath);
-                return temp.ToString();
-            }
-            return defaultIOType;
-        }
-
-        const int defaultPort = 4354;
-        public static int GetPort()
-        {
-            var location = typeof(Mu3IO).Assembly.Location;
-            string directoryName = Path.GetDirectoryName(location);
-            string segatoolsIniPath = Path.Combine(directoryName, "segatools.ini");
-            if (File.Exists(segatoolsIniPath))
-            {
-                StringBuilder temp = new StringBuilder();
-                Kernel32.GetPrivateProfileString("mu3io", "port", defaultPort.ToString(), temp, 1024, segatoolsIniPath);
-                if (int.TryParse(temp.ToString(), out int port))
-                {
-                    return port;
-                }
-            }
-            return defaultPort;
-        }
     }
 }

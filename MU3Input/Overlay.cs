@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 
 using GameOverlay.Drawing;
 using GameOverlay.Windows;
@@ -10,13 +11,15 @@ using SharpDX.Mathematics.Interop;
 
 namespace MU3Input
 {
-    public class Example : IDisposable
+    public class Overlay : IDisposable
     {
         private readonly GraphicsWindow _window;
 
         private readonly Dictionary<string, IBrush> _brushes;
 
-        public Example()
+        public bool Visible { get => _window.IsVisible; set => _window.IsVisible = value; }
+
+        public Overlay(int x,int y,int width,int height)
         {
             _brushes = new Dictionary<string, IBrush>();
 
@@ -26,12 +29,13 @@ namespace MU3Input
                 TextAntiAliasing = false
             };
 
-            _window = new GraphicsWindow(0, 0, 800, 300, gfx)
+            _window = new GraphicsWindow(gfx)
             {
                 FPS = 60,
                 IsTopmost = true,
-                IsVisible = true
+                IsVisible = true,
             };
+            SetSize(x, y, width, height);
 
             _window.DestroyGraphics += _window_DestroyGraphics;
             _window.DrawGraphics += _window_DrawGraphics;
@@ -76,16 +80,23 @@ namespace MU3Input
                 }
             }
         }
-        [System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "FindWindow")]
-        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        [System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "GetForegroundWindow")]
+        public static extern IntPtr GetForegroundWindow();
+        [System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "GetWindowRect")]
+        public static extern int GetWindowRect(IntPtr hwnd, ref System.Drawing.Rectangle lpRect);
+        [System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "GetWindowText")]
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int maxCount);
+        StringBuilder sb = new StringBuilder();
         private void _window_DrawGraphics(object sender, DrawGraphicsEventArgs e)
         {
-            IntPtr handle = FindWindow(null, "Otoge");
-            if (handle != IntPtr.Zero) _window.PlaceAbove(handle);
-
+            if (!Visible) return;
+            IntPtr handle = GetForegroundWindow();
+            GetWindowText(handle, sb, 16);
+            if (sb.ToString() == "Otoge")
+            {
+                _window.PlaceAbove(handle);
+            }
             var gfx = e.Graphics;
-            _window.X = 2560 / 2 - gfx.Width / 2;
-            _window.Y = 1440 - gfx.Height;
             GenRects(gfx.Width, gfx.Height);
             gfx.ClearScene((SolidBrush)_brushes["background"]);
             gfx.FillRectangle(_brushes["red"], buttons[0]);
@@ -119,7 +130,7 @@ namespace MU3Input
 
             //-------------------
             // Right 1
-            buttons[3] = new Rectangle(buttons[2].Right + lrSpacing * 0.5f - buttonSpacing * 0.5f, 0, buttons[2].Right + buttonWidth + buttonSpacing * 0.5f + lrSpacing * 0.5f, height);
+            buttons[3] = new Rectangle(buttons[2].Right + lrSpacing - buttonSpacing, 0, buttons[2].Right + lrSpacing +buttonWidth, height);
             // Right 2
             buttons[4] = new Rectangle(buttons[3].Right, 0, buttons[3].Right + buttonWidth + buttonSpacing, height);
             // Right 3
@@ -133,7 +144,17 @@ namespace MU3Input
             _window.Join();
         }
 
-        ~Example()
+        public void SetSize(int x, int y, int width, int height)
+        {
+            _window.X = x - width / 2;
+            _window.Y = y - height;
+            _window.Width = width;
+            _window.Height = height;
+            _window.Graphics.Width = width;
+            _window.Graphics.Height = height;
+        }
+
+        ~Overlay()
         {
             Dispose(false);
         }
