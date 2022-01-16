@@ -19,6 +19,7 @@ namespace MU3Input
         }
         static StringBuilder temp = new StringBuilder();
         static string initializationFilePath;
+
         public static class MU3IO
         {
             static string section = "mu3io";
@@ -46,6 +47,7 @@ namespace MU3Input
         public static class Overlay
         {
             static string section = "overlay";
+            static bool defaultEnabled = false;
             static int defaultX, defaultY, defaultWidth, defaultHeight;
             static Overlay()
             {
@@ -54,6 +56,16 @@ namespace MU3Input
                 defaultY = rect.Height;
                 defaultWidth = 800;
                 defaultHeight = 300;
+            }
+            public static bool Enabled
+            {
+                get
+                {
+                    Kernel32.GetPrivateProfileString(section, nameof(Enabled).ToLower(), defaultEnabled.ToString(), temp, 5, initializationFilePath);
+                    if (bool.TryParse(temp.ToString(), out bool enabled)) return enabled;
+                    else return defaultEnabled;
+                }
+                set => Kernel32.WritePrivateProfileString(section, nameof(Enabled).ToLower(), value.ToString(), initializationFilePath);
             }
             public static int X
             {
