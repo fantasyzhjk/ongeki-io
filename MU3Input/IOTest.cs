@@ -100,6 +100,7 @@ namespace MU3Input
 
         public void SetColor(uint data)
         {
+            _overlay?.SetLed(data);
             try
             {
                 BeginInvoke(new Action(() =>

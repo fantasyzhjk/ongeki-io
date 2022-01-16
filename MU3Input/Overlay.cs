@@ -17,9 +17,11 @@ namespace MU3Input
 
         private readonly Dictionary<string, IBrush> _brushes;
 
+        private readonly Colors[] _colors = new Colors[6];
+
         public bool Visible { get => _window.IsVisible; set => _window.IsVisible = value; }
 
-        public Overlay(int x,int y,int width,int height)
+        public Overlay(int x, int y, int width, int height)
         {
             _brushes = new Dictionary<string, IBrush>();
 
@@ -42,6 +44,17 @@ namespace MU3Input
             _window.SetupGraphics += _window_SetupGraphics;
         }
 
+        public void SetLed(uint data)
+        {
+
+            _colors[0] = (Colors)((data >> 23 & 1) << 2 | (data >> 19 & 1) << 1 | (data >> 22 & 1) << 0);
+            _colors[1] = (Colors)((data >> 20 & 1) << 2 | (data >> 21 & 1) << 1 | (data >> 18 & 1) << 0);
+            _colors[2] = (Colors)((data >> 17 & 1) << 2 | (data >> 16 & 1) << 1 | (data >> 15 & 1) << 0);
+            _colors[3] = (Colors)((data >> 14 & 1) << 2 | (data >> 13 & 1) << 1 | (data >> 12 & 1) << 0);
+            _colors[4] = (Colors)((data >> 11 & 1) << 2 | (data >> 10 & 1) << 1 | (data >> 9 & 1) << 0);
+            _colors[5] = (Colors)((data >> 8 & 1) << 2 | (data >> 7 & 1) << 1 | (data >> 6 & 1) << 0);
+        }
+
         private void _window_SetupGraphics(object sender, SetupGraphicsEventArgs e)
         {
             var gfx = e.Graphics;
@@ -56,14 +69,14 @@ namespace MU3Input
                 }
             }
             _brushes["background"] = gfx.CreateSolidBrush(0, 0, 0, 0);
-            _brushes["red"] = gfx.CreateSolidBrush(0xFF, 0x45, 0x5B);
-            _brushes["green"] = gfx.CreateSolidBrush(0x45, 0xFF, 0x75);
-            _brushes["blue"] = gfx.CreateSolidBrush(0x45, 0x89, 0xFF);
-            _brushes["yellow"] = gfx.CreateSolidBrush(0xFF, 0xD5, 0x45);
-            _brushes["cyan"] = gfx.CreateSolidBrush(0x45, 0xF8, 0xFF);
-            _brushes["purple"] = gfx.CreateSolidBrush(0x8B, 0x45, 0xFF);
-            _brushes["blank"] = gfx.CreateSolidBrush(0xDD, 0xDD, 0xDD);
-            _brushes["white"] = gfx.CreateSolidBrush(0xFF, 0xFF, 0xFF);
+            _brushes[Colors.Red.ToString().ToLower()] = gfx.CreateSolidBrush(0xFF, 0x45, 0x5B);
+            _brushes[Colors.Green.ToString().ToLower()] = gfx.CreateSolidBrush(0x45, 0xFF, 0x75);
+            _brushes[Colors.Blue.ToString().ToLower()] = gfx.CreateSolidBrush(0x45, 0x89, 0xFF);
+            _brushes[Colors.Yellow.ToString().ToLower()] = gfx.CreateSolidBrush(0xFF, 0xD5, 0x45);
+            _brushes[Colors.Cyan.ToString().ToLower()] = gfx.CreateSolidBrush(0x45, 0xF8, 0xFF);
+            _brushes[Colors.Purple.ToString().ToLower()] = gfx.CreateSolidBrush(0x8B, 0x45, 0xFF);
+            _brushes[Colors.Blank.ToString().ToLower()] = gfx.CreateSolidBrush(0xDD, 0xDD, 0xDD);
+            _brushes[Colors.White.ToString().ToLower()] = gfx.CreateSolidBrush(0xFF, 0xFF, 0xFF);
 
             if (e.RecreateResources) return;
 
@@ -99,12 +112,12 @@ namespace MU3Input
             var gfx = e.Graphics;
             GenRects(gfx.Width, gfx.Height);
             gfx.ClearScene((SolidBrush)_brushes["background"]);
-            gfx.FillRectangle(_brushes["red"], buttons[0]);
-            gfx.FillRectangle(_brushes["green"], buttons[1]);
-            gfx.FillRectangle(_brushes["blue"], buttons[2]);
-            gfx.FillRectangle(_brushes["red"], buttons[3]);
-            gfx.FillRectangle(_brushes["green"], buttons[4]);
-            gfx.FillRectangle(_brushes["blue"], buttons[5]);
+            gfx.FillRectangle(_brushes[_colors[0].ToString().ToLower()], buttons[0]);
+            gfx.FillRectangle(_brushes[_colors[1].ToString().ToLower()], buttons[1]);
+            gfx.FillRectangle(_brushes[_colors[2].ToString().ToLower()], buttons[2]);
+            gfx.FillRectangle(_brushes[_colors[3].ToString().ToLower()], buttons[3]);
+            gfx.FillRectangle(_brushes[_colors[4].ToString().ToLower()], buttons[4]);
+            gfx.FillRectangle(_brushes[_colors[5].ToString().ToLower()], buttons[5]);
         }
         const float PanelMarginCoef = 0.5f;
         const float LRSpacingCoef = 0.5f;
@@ -130,7 +143,7 @@ namespace MU3Input
 
             //-------------------
             // Right 1
-            buttons[3] = new Rectangle(buttons[2].Right + lrSpacing - buttonSpacing, 0, buttons[2].Right + lrSpacing +buttonWidth, height);
+            buttons[3] = new Rectangle(buttons[2].Right + lrSpacing - buttonSpacing, 0, buttons[2].Right + lrSpacing + buttonWidth, height);
             // Right 2
             buttons[4] = new Rectangle(buttons[3].Right, 0, buttons[3].Right + buttonWidth + buttonSpacing, height);
             // Right 3
@@ -178,5 +191,16 @@ namespace MU3Input
             GC.SuppressFinalize(this);
         }
         #endregion
+    }
+    public enum Colors
+    {
+        Red = 0b100,
+        Green = 0b010,
+        Blue = 0b001,
+        Yellow = 0b110,
+        Cyan = 0b011,
+        Purple = 0b101,
+        White = 0b111,
+        Blank = 0b000,
     }
 }
