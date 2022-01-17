@@ -40,6 +40,7 @@ namespace MU3Input
             textY.Text = Initialization.Overlay.Y.ToString();
             textWidth.Text = Initialization.Overlay.Width.ToString();
             textHeight.Text = Initialization.Overlay.Height.ToString();
+            ShowOverlay.Checked = Initialization.Overlay.Enabled;
         }
 
         public bool OverlayVisible
@@ -149,6 +150,7 @@ namespace MU3Input
             {
                 OverlayVisible = checkBox.Checked;
                 checkBox.Checked = OverlayVisible;
+                Initialization.Overlay.Enabled = OverlayVisible;
             }
         }
 
