@@ -68,7 +68,7 @@ namespace MU3Input
                     }
                 }
             }
-            _brushes["background"] = gfx.CreateSolidBrush(0, 0, 0, 0);
+            _brushes["background"] = gfx.CreateSolidBrush(0x0, 0x0, 0x0, 0x0);
             _brushes[Colors.Red.ToString().ToLower()] = gfx.CreateSolidBrush(0xFF, 0x45, 0x5B);
             _brushes[Colors.Green.ToString().ToLower()] = gfx.CreateSolidBrush(0x45, 0xFF, 0x75);
             _brushes[Colors.Blue.ToString().ToLower()] = gfx.CreateSolidBrush(0x45, 0x89, 0xFF);
@@ -118,6 +118,12 @@ namespace MU3Input
             gfx.FillRectangle(_brushes[_colors[3].ToString().ToLower()], buttons[3]);
             gfx.FillRectangle(_brushes[_colors[4].ToString().ToLower()], buttons[4]);
             gfx.FillRectangle(_brushes[_colors[5].ToString().ToLower()], buttons[5]);
+            gfx.DrawRectangle(_brushes[Colors.White.ToString().ToLower()], buttons[0], 1);
+            gfx.DrawRectangle(_brushes[Colors.White.ToString().ToLower()], buttons[1], 1);
+            gfx.DrawRectangle(_brushes[Colors.White.ToString().ToLower()], buttons[2], 1);
+            gfx.DrawRectangle(_brushes[Colors.White.ToString().ToLower()], buttons[3], 1);
+            gfx.DrawRectangle(_brushes[Colors.White.ToString().ToLower()], buttons[4], 1);
+            gfx.DrawRectangle(_brushes[Colors.White.ToString().ToLower()], buttons[5], 1);
         }
         const float PanelMarginCoef = 0.5f;
         const float LRSpacingCoef = 0.5f;
