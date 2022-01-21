@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows;
 
@@ -18,6 +19,8 @@ namespace MU3Input
         private readonly Dictionary<string, IBrush> _brushes;
 
         private readonly Colors[] _colors = new Colors[6];
+
+        private bool _inRhythmGame = false;
 
         public bool Visible { get => _window.IsVisible; set => _window.IsVisible = value; }
 
@@ -46,13 +49,16 @@ namespace MU3Input
 
         public void SetLed(uint data)
         {
-
             _colors[0] = (Colors)((data >> 23 & 1) << 2 | (data >> 19 & 1) << 1 | (data >> 22 & 1) << 0);
             _colors[1] = (Colors)((data >> 20 & 1) << 2 | (data >> 21 & 1) << 1 | (data >> 18 & 1) << 0);
             _colors[2] = (Colors)((data >> 17 & 1) << 2 | (data >> 16 & 1) << 1 | (data >> 15 & 1) << 0);
             _colors[3] = (Colors)((data >> 14 & 1) << 2 | (data >> 13 & 1) << 1 | (data >> 12 & 1) << 0);
             _colors[4] = (Colors)((data >> 11 & 1) << 2 | (data >> 10 & 1) << 1 | (data >> 9 & 1) << 0);
             _colors[5] = (Colors)((data >> 8 & 1) << 2 | (data >> 7 & 1) << 1 | (data >> 6 & 1) << 0);
+            if (_colors.Count(c => c == Colors.Red) == 2 && _colors.Count(c => c == Colors.Green) == 2 && _colors.Count(c => c == Colors.Blue) == 2)
+            {
+                _inRhythmGame=true;
+            }
         }
 
         private void _window_SetupGraphics(object sender, SetupGraphicsEventArgs e)
@@ -107,6 +113,7 @@ namespace MU3Input
             GetWindowText(handle, sb, 16);
             if (sb.ToString() == "Otoge")
             {
+                if (!_inRhythmGame) return;
                 _window.PlaceAbove(handle);
             }
             var gfx = e.Graphics;
