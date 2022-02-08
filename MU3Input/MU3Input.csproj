@@ -67,6 +67,8 @@
   <ItemGroup>
     <Compile Include="AimeIO.cs" />
     <Compile Include="Brushes\LinearGradientBrush.cs" />
+    <Compile Include="IO\TcpIO.cs" />
+    <Compile Include="Job.cs" />
     <Compile Include="Overlay.cs" />
     <Compile Include="IO\HidIO.cs" />
     <Compile Include="IO\IO.cs" />
