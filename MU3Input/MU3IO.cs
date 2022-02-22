@@ -32,6 +32,9 @@ namespace MU3Input
                 case "udp":
                     Io = new UdpIO(Initialization.MU3IO.Port);
                     break;
+                case "tcp":
+                    Io = new TcpIO(Initialization.MU3IO.Port);
+                    break;
                 default:
                     Io = new HidIO();
                     break;
