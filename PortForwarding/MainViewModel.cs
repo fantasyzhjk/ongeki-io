@@ -1,6 +1,7 @@
 ﻿using iMobileDevice;
 using iMobileDevice.iDevice;
 using iMobileDevice.Lockdown;
+using iMobileDevice.Usbmuxd;
 
 using PropertyChanged;
 
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 
 namespace PortForwarding
 {
@@ -20,16 +22,28 @@ namespace PortForwarding
         }
 
         private IiDeviceApi iDevice = LibiMobileDevice.Instance.iDevice;
+        private IUsbmuxdApi usbmuxd = LibiMobileDevice.Instance.Usbmuxd;
         private ILockdownApi lockdown = LibiMobileDevice.Instance.Lockdown;
 
-        public ushort LocalPort { get; set; }
-        public ushort RemotePort { get; set; }
+        public ushort LocalPort { get; set; } = 4354;
+        public ushort RemotePort { get; set; } = 4354;
         public int SelectedDeviceIndex { get; set; }
-        private ObservableCollection<(string name, string udid)> Devices { get; set; } = new ObservableCollection<(string, string)>();
+        public ObservableCollection<(string name, string udid)> Devices { get; set; } = new ObservableCollection<(string, string)>();
+        public ICommand Connect { get; set; }
 
         public MainViewModel()
         {
             iDevice.idevice_event_subscribe(new iDeviceEventCallBack(DeviceEventCallback), IntPtr.Zero);
+            Connect = new SimpleCommand(ConnectExecute);
+        }
+
+        private void ConnectExecute(object obj)
+        {
+            string udid = Devices[SelectedDeviceIndex].udid;
+            UsbmuxdDeviceInfo deviceInfo = new UsbmuxdDeviceInfo();
+            int code;
+            code = usbmuxd.usbmuxd_get_device_by_udid(udid, ref deviceInfo);
+            code = usbmuxd.usbmuxd_connect(deviceInfo.handle, RemotePort);
         }
 
         private void DeviceEventCallback(ref iDeviceEvent e, IntPtr userData)

@@ -9,47 +9,45 @@ namespace MU3Input
 {
     public class TcpIO : IO
     {
-        const int defaultPort = 4354;
-        uint currentLedData = 0;
-        TcpListener listener;
-        TcpClient client;
-        NetworkStream networkStream;
+        private string ip = "127.0.0.1";
+        private int port;
+        private uint currentLedData = 0;
+        private bool connecting = false;
+        private TcpListener listener;
+        private TcpClient client;
+        private NetworkStream networkStream;
         public TcpIO(int port)
         {
+            this.port = port;
             _data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
-            IPAddress ip = new IPAddress(new byte[] { 0, 0, 0, 0 });
-            listener = new TcpListener(ip, port);
-            listener.Start();
             new Thread(PollThread).Start();
-            //接收多个连接并只保留最后一个
-            new Thread(async () =>
-            {
-                while (true)
-                {
-                    connectTask = ConnectAsync();
-                    await connectTask;
-                }
-            }).Start();
 
         }
-        Task connectTask;
         public override bool IsConnected => client?.Connected ?? false;
-        bool connecting = false;
-        // 自动重连,无需外部调用
+        // 重连
         public override void Reconnect()
         {
+            if (connecting) return;
+            Disconnect();
+            ConnectAsync(ip, port);
             //connectTask?.Wait();
         }
-        public async Task ConnectAsync()
+        public void ConnectAsync(string ip, int port)
         {
             if (connecting) return;
             connecting = true;
-            var newClient = await listener.AcceptTcpClientAsync();
-            Disconnect();
-            client = newClient;
-            networkStream = client.GetStream();
+            try
+            {
+                var newClient = new TcpClient(ip, port);
+                networkStream = newClient.GetStream();
+                client = newClient;
+                SetLed(currentLedData);
+            }
+            catch (Exception ex)
+            {
+                Disconnect();
+            }
             connecting = false;
-            SetLed(currentLedData);
         }
         private void Disconnect()
         {
@@ -68,14 +66,13 @@ namespace MU3Input
             {
                 if (!IsConnected)
                 {
-                    connectTask?.Wait();
+                    Reconnect();
                     continue;
                 }
-                IAsyncResult result = networkStream.BeginRead(_inBuffer, 0, _inBuffer.Length, new AsyncCallback((res) => { }), null);
-                int len = networkStream.EndRead(result);
+                int len = networkStream.Read(_inBuffer, 0, _inBuffer.Length);
                 if (len <= 0)
                 {
-                    Disconnect();
+                    Reconnect();
                     continue;
                 }
                 var temp = _inBuffer.ToStructure<OutputData>();

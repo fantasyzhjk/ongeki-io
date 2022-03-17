@@ -9,7 +9,9 @@
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
-    <Grid>
-        
-    </Grid>
+    <StackPanel>
+        <ComboBox ItemsSource="{Binding Devices}" SelectedIndex="{Binding SelectedDeviceIndex}"/>
+        <TextBox Text="{Binding RemotePort}"/>
+        <Button Content="连接" Command="{Binding Connect}"/>
+    </StackPanel>
 </Window>

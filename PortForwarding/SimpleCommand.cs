@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Input;
+
+namespace PortForwarding
+{
+    internal class SimpleCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+        public Action<object> Action { get; set; }
+
+        public SimpleCommand(Action<object> action)
+        {
+            Action = action;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            Action?.Invoke(parameter);
+        }
+    }
+}
