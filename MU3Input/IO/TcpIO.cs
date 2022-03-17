@@ -53,10 +53,12 @@ namespace MU3Input
         {
             if (IsConnected)
             {
-                networkStream?.Dispose();
-                client?.Dispose();
+                var tmpClient = client;
+                var tmpStream = networkStream;
                 client = null;
                 networkStream = null;
+                tmpClient?.Dispose();
+                tmpStream?.Dispose();
             }
         }
         private byte[] _inBuffer = new byte[24];
