@@ -53,11 +53,14 @@ namespace PortForwarding
             {
                 case iDeviceEventType.DeviceAdd:
                     string name = GetDeviceName(udid);
-                    if (!Devices.Any(d => d.udid.Equals(udid))) Devices.Add((name, udid));
+                    if (!Devices.Any(d => d.udid.Equals(udid)))
+                    {
+                        App.Current.Dispatcher.Invoke(() => Devices.Add((name, udid)));
+                    }
                     break;
                 case iDeviceEventType.DeviceRemove:
                     var value = Devices.First(d => d.udid.Equals(udid));
-                    Devices.Remove(value);
+                    App.Current.Dispatcher.Invoke(() => Devices.Remove(value));
                     break;
                 case iDeviceEventType.DevicePaired:
                     break;
