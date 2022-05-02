@@ -100,18 +100,13 @@ namespace MU3Input
                 }
             }
         }
-        [System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "GetForegroundWindow")]
-        public static extern IntPtr GetForegroundWindow();
-        [System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "GetWindowRect")]
-        public static extern int GetWindowRect(IntPtr hwnd, ref System.Drawing.Rectangle lpRect);
-        [System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "GetWindowText")]
-        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int maxCount);
+
         StringBuilder sb = new StringBuilder();
         private void _window_DrawGraphics(object sender, DrawGraphicsEventArgs e)
         {
             if (!Visible) return;
-            IntPtr handle = GetForegroundWindow();
-            GetWindowText(handle, sb, 16);
+            IntPtr handle = User32.GetForegroundWindow();
+            User32.GetWindowText(handle, sb, 16);
             string windowText = sb.ToString();
             var gfx = e.Graphics;
             GenRects(gfx.Width, gfx.Height);
