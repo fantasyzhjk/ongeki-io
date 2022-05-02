@@ -19,6 +19,7 @@ namespace MU3Input
         private readonly Dictionary<string, IBrush> _brushes;
 
         private readonly Colors[] _colors = new Colors[6];
+        private readonly byte[] _buttonStates = new byte[6];
 
         private bool _inRhythmGame = false;
 
@@ -37,7 +38,6 @@ namespace MU3Input
             _window = new GraphicsWindow(gfx)
             {
                 Title = "Ongeki IO Debug",
-                FPS = 60,
                 IsTopmost = true,
                 IsVisible = true,
             };
@@ -47,7 +47,15 @@ namespace MU3Input
             _window.DrawGraphics += _window_DrawGraphics;
             _window.SetupGraphics += _window_SetupGraphics;
         }
-
+        public void SetButtonState(byte[] buttons)
+        {
+            this._buttonStates[0] = buttons[0];
+            this._buttonStates[1] = buttons[1];
+            this._buttonStates[2] = buttons[2];
+            this._buttonStates[3] = buttons[5];
+            this._buttonStates[4] = buttons[6];
+            this._buttonStates[5] = buttons[7];
+        }
         public void SetLed(uint data)
         {
             _colors[0] = (Colors)((data >> 23 & 1) << 2 | (data >> 19 & 1) << 1 | (data >> 22 & 1) << 0);
@@ -84,6 +92,7 @@ namespace MU3Input
             _brushes[Colors.Purple.ToString().ToLower()] = gfx.CreateSolidBrush(0x8B, 0x45, 0xFF);
             _brushes[Colors.Blank.ToString().ToLower()] = gfx.CreateSolidBrush(0xDD, 0xDD, 0xDD);
             _brushes[Colors.White.ToString().ToLower()] = gfx.CreateSolidBrush(0xFF, 0xFF, 0xFF);
+            _brushes["translucent"] = gfx.CreateSolidBrush(0x00, 0x00, 0x00,0x88);
 
             if (e.RecreateResources) return;
 
@@ -134,6 +143,13 @@ namespace MU3Input
             gfx.DrawRectangle(_brushes[Colors.White.ToString().ToLower()], buttons[3], 1);
             gfx.DrawRectangle(_brushes[Colors.White.ToString().ToLower()], buttons[4], 1);
             gfx.DrawRectangle(_brushes[Colors.White.ToString().ToLower()], buttons[5], 1);
+            for(int i = 0; i < _buttonStates.Length; i++)
+            {
+                if (_buttonStates[i] > 0)
+                {
+                    gfx.FillRectangle(_brushes["translucent"], buttons[i]);
+                }
+            }
         }
         const float PanelMarginCoef = 0.5f;
         const float LRSpacingCoef = 0.5f;

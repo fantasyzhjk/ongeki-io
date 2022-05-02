@@ -15,7 +15,7 @@ namespace TestSharp
             Mu3IO.Init();
             while (true)
             {
-                Task.Delay(100).Wait();
+                Task.Delay(1).Wait();
                 Mu3IO.Poll();
             }
             Console.ReadKey();

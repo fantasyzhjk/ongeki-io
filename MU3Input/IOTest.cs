@@ -84,7 +84,7 @@ namespace MU3Input
                         _left[i].Checked = Convert.ToBoolean(_io.Data.Buttons[i]);
                         _right[i].Checked = Convert.ToBoolean(_io.Data.Buttons[i + 5]);
                     }
-
+                    _overlay?.SetButtonState(_io.Data.Buttons);
                     trackBar1.Value = _io.Lever;
 
                     if (_io.Scan)
