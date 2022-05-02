@@ -35,6 +35,9 @@ namespace MU3Input
                 case "tcp":
                     Io = new TcpIO(Initialization.MU3IO.Port);
                     break;
+                case "usbmux":
+                    Io = new UsbmuxIO((ushort)Initialization.MU3IO.Port);
+                    break;
                 default:
                     Io = new HidIO();
                     break;

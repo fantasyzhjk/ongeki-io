@@ -36,6 +36,7 @@ namespace MU3Input
 
             _window = new GraphicsWindow(gfx)
             {
+                Title = "Ongeki IO Debug",
                 FPS = 60,
                 IsTopmost = true,
                 IsVisible = true,
@@ -57,7 +58,7 @@ namespace MU3Input
             _colors[5] = (Colors)((data >> 8 & 1) << 2 | (data >> 7 & 1) << 1 | (data >> 6 & 1) << 0);
             if (_colors.Count(c => c == Colors.Red) == 2 && _colors.Count(c => c == Colors.Green) == 2 && _colors.Count(c => c == Colors.Blue) == 2)
             {
-                _inRhythmGame=true;
+                _inRhythmGame = true;
             }
         }
 
@@ -111,14 +112,21 @@ namespace MU3Input
             if (!Visible) return;
             IntPtr handle = GetForegroundWindow();
             GetWindowText(handle, sb, 16);
-            if (sb.ToString() == "Otoge")
-            {
-                if (!_inRhythmGame) return;
-                _window.PlaceAbove(handle);
-            }
+            string windowText = sb.ToString();
             var gfx = e.Graphics;
             GenRects(gfx.Width, gfx.Height);
             gfx.ClearScene((SolidBrush)_brushes["background"]);
+            if (windowText == "Otoge")
+            {
+                if (_inRhythmGame)
+                {
+                    _window.PlaceAbove(handle);
+                }
+            }
+            if (windowText != "Otoge" && windowText != "Ongeki IO Debug")
+            {
+                return;
+            }
             gfx.FillRectangle(_brushes[_colors[0].ToString().ToLower()], buttons[0]);
             gfx.FillRectangle(_brushes[_colors[1].ToString().ToLower()], buttons[1]);
             gfx.FillRectangle(_brushes[_colors[2].ToString().ToLower()], buttons[2]);

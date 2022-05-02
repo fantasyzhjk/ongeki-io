@@ -48,6 +48,26 @@
     <DllExportPreProcType>0</DllExportPreProcType>
     <DllExportPostProcType>0</DllExportPostProcType>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -68,6 +88,7 @@
     <Compile Include="AimeIO.cs" />
     <Compile Include="Brushes\LinearGradientBrush.cs" />
     <Compile Include="IO\TcpIO.cs" />
+    <Compile Include="IO\UsbmuxIO.cs" />
     <Compile Include="Job.cs" />
     <Compile Include="Overlay.cs" />
     <Compile Include="IO\HidIO.cs" />
@@ -96,11 +117,6 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Costura.Fody">
-      <Version>5.7.0</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="DllExport">
       <Version>1.7.4</Version>
       <Visible>false</Visible>
@@ -109,8 +125,8 @@
     <PackageReference Include="GameOverlay.Net">
       <Version>4.3.1</Version>
     </PackageReference>
-    <PackageReference Include="SharpAdbClient">
-      <Version>2.3.23</Version>
+    <PackageReference Include="iMobileDevice-net">
+      <Version>1.3.17</Version>
     </PackageReference>
     <PackageReference Include="SharpDX">
       <Version>4.2.0</Version>
