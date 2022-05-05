@@ -26,6 +26,10 @@ namespace MU3Input
         {
             NativeLibraries.Load();
         }
+        ~UsbmuxIO()
+        {
+            connection?.Close();
+        }
         public UsbmuxIO(ushort remotePort)
         {
             this.remotePort = remotePort;

@@ -64,10 +64,7 @@ namespace MU3Input
             _colors[3] = (Colors)((data >> 14 & 1) << 2 | (data >> 13 & 1) << 1 | (data >> 12 & 1) << 0);
             _colors[4] = (Colors)((data >> 11 & 1) << 2 | (data >> 10 & 1) << 1 | (data >> 9 & 1) << 0);
             _colors[5] = (Colors)((data >> 8 & 1) << 2 | (data >> 7 & 1) << 1 | (data >> 6 & 1) << 0);
-            if (_colors.Count(c => c == Colors.Red) == 2 && _colors.Count(c => c == Colors.Green) == 2 && _colors.Count(c => c == Colors.Blue) == 2)
-            {
-                _inRhythmGame = true;
-            }
+            _inRhythmGame=_colors.Count(c => c == Colors.Red) == 2 && _colors.Count(c => c == Colors.Green) == 2 && _colors.Count(c => c == Colors.Blue) == 2;
         }
 
         private void _window_SetupGraphics(object sender, SetupGraphicsEventArgs e)
@@ -92,7 +89,7 @@ namespace MU3Input
             _brushes[Colors.Purple.ToString().ToLower()] = gfx.CreateSolidBrush(0x8B, 0x45, 0xFF);
             _brushes[Colors.Blank.ToString().ToLower()] = gfx.CreateSolidBrush(0xDD, 0xDD, 0xDD);
             _brushes[Colors.White.ToString().ToLower()] = gfx.CreateSolidBrush(0xFF, 0xFF, 0xFF);
-            _brushes["translucent"] = gfx.CreateSolidBrush(0x00, 0x00, 0x00,0x88);
+            _brushes["translucent"] = gfx.CreateSolidBrush(0x00, 0x00, 0x00, 0x88);
 
             if (e.RecreateResources) return;
 
@@ -126,6 +123,10 @@ namespace MU3Input
                 {
                     _window.PlaceAbove(handle);
                 }
+                else
+                {
+                    return;
+                }
             }
             if (windowText != "Otoge" && windowText != "Ongeki IO Debug")
             {
@@ -143,7 +144,7 @@ namespace MU3Input
             gfx.DrawRectangle(_brushes[Colors.White.ToString().ToLower()], buttons[3], 1);
             gfx.DrawRectangle(_brushes[Colors.White.ToString().ToLower()], buttons[4], 1);
             gfx.DrawRectangle(_brushes[Colors.White.ToString().ToLower()], buttons[5], 1);
-            for(int i = 0; i < _buttonStates.Length; i++)
+            for (int i = 0; i < _buttonStates.Length; i++)
             {
                 if (_buttonStates[i] > 0)
                 {
