@@ -43,7 +43,7 @@ namespace MU3Input
             {
                 byte[] buffer = client?.Receive(ref remoteEP);
                 // 如果已连接设备但收到了其他设备的消息则忽略
-                if (IsConnected && (remoteEP.Address.Address != savedEP.Address.Address)) return;
+                if (IsConnected && (remoteEP.Address.Address != savedEP?.Address?.Address)) return;
                 ParseBuffer(buffer);
             }
         }

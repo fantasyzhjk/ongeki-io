@@ -17,6 +17,7 @@ namespace TestSharp
             {
                 Task.Delay(1).Wait();
                 Mu3IO.Poll();
+                Mu3IO.GetGameButtons(out byte left,out byte right);
             }
             Console.ReadKey();
         }

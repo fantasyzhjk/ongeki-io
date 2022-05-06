@@ -41,19 +41,59 @@ namespace MU3Input
 
         public OutputData Data => _data;
 
-        public byte LeftButton =>
-            (byte)(_data.Buttons[0] << 0
-                    | _data.Buttons[1] << 1
-                    | _data.Buttons[2] << 2
-                    | _data.Buttons[3] << 3
-                    | _data.Buttons[4] << 4);
+        private byte[] leftButtonsCache = new byte[5];
+        private byte[] rightButtonsCache = new byte[5];
+        public byte LeftButton
+        {
+            get
+            {
+                byte result = 0;
+                for (int i = 4; i >= 0; i--)
+                {
+                    result <<= 1;
+                    // 按钮触点数量不为0时
+                    if (_data.Buttons[i] > 0)
+                    {
+                        // 当已被按下并增加触点数量时自动松开一帧
+                        if (leftButtonsCache[i] > 0 && _data.Buttons[i] > leftButtonsCache[i])
+                        {
+                            result += 0;
+                        }
+                        else
+                        {
+                            result += 1;
+                        }
+                    }
+                }
+                Array.Copy(_data.Buttons, 0, leftButtonsCache, 0, 5);
+                return result;
+            }
+        }
 
-        public byte RightButton =>
-            (byte)(_data.Buttons[5] << 0
-                    | _data.Buttons[6] << 1
-                    | _data.Buttons[7] << 2
-                    | _data.Buttons[8] << 3
-                    | _data.Buttons[9] << 4);
+        public byte RightButton
+        {
+            get
+            {
+                byte result = 0;
+                for (int i = 4; i >= 0; i--)
+                {
+                    result <<= 1;
+                    if (_data.Buttons[i + 5] > 0)
+                    {
+                        if (rightButtonsCache[i] > 0 && _data.Buttons[i + 5] > rightButtonsCache[i])
+                        {
+                            result += 0;
+                        }
+                        else
+                        {
+                            result += 1;
+                        }
+                    }
+                }
+                Array.Copy(_data.Buttons, 5, rightButtonsCache, 0, 5);
+                return result;
+            }
+        }
 
         public short Lever
         {
