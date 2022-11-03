@@ -1,16 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.Text;
-using System.Reflection;
-using System.IO;
 
 namespace MU3Input
 {
     public static class Mu3IO
     {
-        internal static IO Io;
-        public static IOTest _test;
+        internal static IO IO;
 
         [DllExport(ExportName = "mu3_io_get_api_version")]
         public static ushort GetVersion()
@@ -27,86 +22,73 @@ namespace MU3Input
                 Process.GetCurrentProcess().ProcessName != "Test")
                 return 0;
 
-            switch (Initialization.MU3IO.Protocol.ToLower())
+            var io = new MixedIO();
+            foreach (var ioConfig in Config.Instance.IO)
             {
-                case "udp":
-                    Io = new UdpIO(Initialization.MU3IO.Port);
-                    break;
-                case "tcp":
-                    Io = new TcpIO(Initialization.MU3IO.Port);
-                    break;
-                case "usbmux":
-                    Io = new UsbmuxIO((ushort)Initialization.MU3IO.Port);
-                    break;
-                default:
-                    Io = new HidIO();
-                    break;
+                io.Add(io.CreateIO(ioConfig.Type, ioConfig.Param), ioConfig.Part);
             }
+            IO = io;
 
-            _test = new IOTest(Io);
-            Task.Run(() => _test.ShowDialog());
             return 0;
         }
 
         [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_poll")]
         public static uint Poll()
         {
-            if (Io == null)
+            if (IO == null)
                 return 0;
 
-            if (!Io.IsConnected)
+            if (!IO.IsConnected)
             {
-                Io.Reconnect();
+                IO.Reconnect();
             }
 
-            _test.UpdateData();
             return 0;
         }
 
         [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_get_opbtns")]
         public static void GetOpButtons(out byte opbtn)
         {
-            if (Io == null || !Io.IsConnected)
+            if (IO == null || !IO.IsConnected)
             {
                 opbtn = 0;
                 return;
             }
 
-            opbtn = (byte)Io.OptButtonsStatus;
+            opbtn = (byte)IO.OptButtonsStatus;
         }
 
         [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_get_gamebtns")]
         public static void GetGameButtons(out byte left, out byte right)
         {
-            if (Io == null || !Io.IsConnected)
+            if (IO == null || !IO.IsConnected)
             {
                 left = 0;
                 right = 0;
                 return;
             }
 
-            left = Io.LeftButton;
-            right = Io.RightButton;
+            left = IO.LeftButton;
+            right = IO.RightButton;
         }
 
         [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_get_lever")]
         public static void GetLever(out short pos)
         {
             pos = 0;
-            if (Io == null || !Io.IsConnected)
+            if (IO == null || !IO.IsConnected)
             {
                 pos = 0;
                 return;
             }
 
-            pos = Io.Lever;
+            pos = IO.Lever;
         }
 
         [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_set_led")]
         public static void SetLed(uint data)
         {
-            _test.SetColor(data);
-            Io.SetLed(data);
+            IO.SetLed(data);
         }
 
 

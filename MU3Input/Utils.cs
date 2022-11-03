@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Text;
 
 namespace MU3Input
 {
@@ -22,7 +21,7 @@ namespace MU3Input
                 var bytes = id.ToBcd();
                 aimeId = new byte[10 - bytes.Length].Concat(bytes).ToArray();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Random random = new Random();
                 byte[] temp = new byte[10];

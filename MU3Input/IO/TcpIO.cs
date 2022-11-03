@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace MU3Input
 {
@@ -13,17 +11,19 @@ namespace MU3Input
         private int port;
         private uint currentLedData = 0;
         private bool connecting = false;
-        private TcpListener listener;
         private TcpClient client;
         private NetworkStream networkStream;
+        protected OutputData data;
+
         public TcpIO(int port)
         {
             this.port = port;
-            _data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
+            data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
             new Thread(PollThread).Start();
 
         }
         public override bool IsConnected => client?.Connected ?? false;
+        public override OutputData Data => data;
         // 重连
         public override void Reconnect()
         {
@@ -43,7 +43,7 @@ namespace MU3Input
                 client = newClient;
                 SetLed(currentLedData);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Disconnect();
             }
@@ -82,7 +82,7 @@ namespace MU3Input
                 {
                     temp.AimiId = Utils.ReadOrCreateAimeTxt();
                 }
-                _data = temp;
+                data = temp;
             }
         }
         public override unsafe void SetLed(uint data)

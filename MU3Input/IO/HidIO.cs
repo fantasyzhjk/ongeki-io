@@ -8,19 +8,23 @@ namespace MU3Input
     // ReSharper disable once InconsistentNaming
     public class HidIO : IO
     {
+
         protected int _openCount = 0;
         private byte[] _inBuffer = new byte[64];
         private readonly SimpleRawHID _hid = new SimpleRawHID();
         private const ushort VID = 0x2341;
         private const ushort PID = 0x8036;
+        protected OutputData data;
 
 
         public HidIO()
         {
-            _data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
+            data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
             Reconnect();
             new Thread(PollThread).Start();
         }
+        public override bool IsConnected => _openCount > 0;
+        public override OutputData Data => data;
 
         public override void Reconnect()
         {
@@ -35,7 +39,6 @@ namespace MU3Input
             23, 19, 22, 20, 21, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6
         };
 
-        public override bool IsConnected => _openCount > 0;
 
         private void PollThread()
         {
@@ -58,7 +61,7 @@ namespace MU3Input
                 {
                     temp.AimiId = Utils.ReadOrCreateAimeTxt();
                 }
-                _data = temp;
+                data = temp;
             }
         }
 

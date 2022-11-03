@@ -18,9 +18,11 @@ namespace MU3Input
         {
             AutoReset = false
         };
+        protected OutputData data;
+
         public UdpIO(int port)
         {
-            _data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
+            data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
             client = new UdpClient(port);
             timer.Elapsed += Timer_Elapsed;
             new Thread(PollThread).Start();
@@ -35,6 +37,7 @@ namespace MU3Input
 
         bool isConnected = false;
         public override bool IsConnected => isConnected;
+        public override OutputData Data => data;
         public override void Reconnect() { }
 
         private void PollThread()
@@ -43,7 +46,7 @@ namespace MU3Input
             {
                 byte[] buffer = client?.Receive(ref remoteEP);
                 // 如果已连接设备但收到了其他设备的消息则忽略
-                if (IsConnected && (remoteEP.Address.Address != savedEP?.Address?.Address)) return;
+                if (IsConnected && (!remoteEP.Address.Equals(savedEP?.Address))) return;
                 ParseBuffer(buffer);
             }
         }
@@ -54,42 +57,42 @@ namespace MU3Input
             if (buffer[0] == (byte)MessageType.ButtonStatus && buffer.Length == 3)
             {
                 int index = buffer[1];
-                _data.Buttons[index] = buffer[2];
+                data.Buttons[index] = buffer[2];
             }
             else if (buffer[0] == (byte)MessageType.MoveLever && buffer.Length == 3)
             {
                 var value = (short)(buffer[2] << 8 | buffer[1]);
-                _data.Lever = value;
+                data.Lever = value;
             }
             else if (buffer[0] == (byte)MessageType.Scan && buffer.Length == 12)
             {
-                _data.Scan = buffer[1] > 0;
+                data.Scan = buffer[1] > 0;
                 byte[] aimeId = new ArraySegment<byte>(buffer, 2, 10).ToArray();
                 if (aimeId.All(n => n == 255))
                 {
                     aimeId = Utils.ReadOrCreateAimeTxt();
                 }
-                _data.AimiId = aimeId;
+                data.AimiId = aimeId;
             }
             else if (buffer[0] == (byte)MessageType.Test && buffer.Length == 2)
             {
-                if (buffer[1] == 0) _data.OptButton ^= OptButtons.Test;
-                else _data.OptButton |= OptButtons.Test;
-                Debug.WriteLine(_data.OptButton);
+                if (buffer[1] == 0) data.OptButton ^= OptButtons.Test;
+                else data.OptButton |= OptButtons.Test;
+                Debug.WriteLine(Data.OptButton);
             }
             else if (buffer[0] == (byte)MessageType.Service && buffer.Length == 2)
             {
-                if (buffer[1] == 0) _data.OptButton ^= OptButtons.Service;
-                else _data.OptButton |= OptButtons.Service;
-                Debug.WriteLine(_data.OptButton);
+                if (buffer[1] == 0) data.OptButton ^= OptButtons.Service;
+                else data.OptButton |= OptButtons.Service;
+                Debug.WriteLine(Data.OptButton);
             }
             else if (buffer[0] == (byte)MessageType.RequestValues && buffer.Length == 1)
             {
                 SetLed(currentLedData);
-                SetLever(_data.Lever);
+                SetLever(Data.Lever);
             }
             // 收到心跳数据直接回传原数据表示在线，并保存其地址阻止其他设备连接
-            else if (buffer[0] == (byte)MessageType.DokiDoki && buffer.Length == 2)
+            else if (buffer[0] == (byte)MessageType.Hello && buffer.Length == 2)
             {
                 savedEP = new IPEndPoint(remoteEP.Address, remoteEP.Port);
                 client.SendAsync(buffer, 2, savedEP);
@@ -140,7 +143,7 @@ namespace MU3Input
             SetLever = 7,
             Service = 8,
             // 寻找在线设备
-            DokiDoki = 255
+            Hello = 255
         }
     }
 }

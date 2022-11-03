@@ -1,15 +1,11 @@
 ﻿using iMobileDevice;
 using iMobileDevice.iDevice;
 using iMobileDevice.Lockdown;
-using iMobileDevice.Usbmuxd;
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace MU3Input
 {
@@ -21,7 +17,9 @@ namespace MU3Input
         private ILockdownApi lockdown = LibiMobileDevice.Instance.Lockdown;
         iDeviceEventCallBack deviceEventCallBack;
         public List<string> Devices = new List<string>();
+        protected OutputData data;
         public override bool IsConnected => !(connection?.IsClosed ?? true);
+        public override OutputData Data => data;
         static UsbmuxIO()
         {
             NativeLibraries.Load();
@@ -34,7 +32,7 @@ namespace MU3Input
         {
             this.remotePort = remotePort;
             deviceEventCallBack = new iDeviceEventCallBack(DeviceEventCallback);
-            _data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
+            data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
             iDevice.idevice_event_subscribe(deviceEventCallBack, IntPtr.Zero);
             new Thread(PollThread).Start();
         }
@@ -87,7 +85,7 @@ namespace MU3Input
                 {
                     temp.AimiId = Utils.ReadOrCreateAimeTxt();
                 }
-                _data = temp;
+                data = temp;
             }
         }
         private uint currentLedData = 0;

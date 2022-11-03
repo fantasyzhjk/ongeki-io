@@ -37,9 +37,7 @@ namespace MU3Input
     }
     public abstract class IO
     {
-        protected OutputData _data;
-
-        public OutputData Data => _data;
+        public abstract OutputData Data { get; }
 
         private byte[] leftButtonsCache = new byte[5];
         private byte[] rightButtonsCache = new byte[5];
@@ -52,10 +50,10 @@ namespace MU3Input
                 {
                     result <<= 1;
                     // 按钮触点数量不为0时
-                    if (_data.Buttons[i] > 0)
+                    if (Data.Buttons[i] > 0)
                     {
                         // 当已被按下并增加触点数量时自动松开一帧
-                        if (leftButtonsCache[i] > 0 && _data.Buttons[i] > leftButtonsCache[i])
+                        if (leftButtonsCache[i] > 0 && Data.Buttons[i] > leftButtonsCache[i])
                         {
                             result += 0;
                         }
@@ -65,7 +63,7 @@ namespace MU3Input
                         }
                     }
                 }
-                Array.Copy(_data.Buttons, 0, leftButtonsCache, 0, 5);
+                Array.Copy(Data.Buttons, 0, leftButtonsCache, 0, 5);
                 return result;
             }
         }
@@ -78,9 +76,9 @@ namespace MU3Input
                 for (int i = 4; i >= 0; i--)
                 {
                     result <<= 1;
-                    if (_data.Buttons[i + 5] > 0)
+                    if (Data.Buttons[i + 5] > 0)
                     {
-                        if (rightButtonsCache[i] > 0 && _data.Buttons[i + 5] > rightButtonsCache[i])
+                        if (rightButtonsCache[i] > 0 && Data.Buttons[i + 5] > rightButtonsCache[i])
                         {
                             result += 0;
                         }
@@ -90,7 +88,7 @@ namespace MU3Input
                         }
                     }
                 }
-                Array.Copy(_data.Buttons, 5, rightButtonsCache, 0, 5);
+                Array.Copy(Data.Buttons, 5, rightButtonsCache, 0, 5);
                 return result;
             }
         }
@@ -99,14 +97,14 @@ namespace MU3Input
         {
             get
             {
-                return _data.Lever;
+                return Data.Lever;
             }
         }
 
-        public bool Scan => _data.Scan;
+        public bool Scan => Data.Scan;
 
-        public byte[] AimiId => _data.AimiId;
-        public OptButtons OptButtonsStatus => _data.OptButton;
+        public byte[] AimiId => Data.AimiId;
+        public OptButtons OptButtonsStatus => Data.OptButton;
 
         public abstract bool IsConnected { get; }
         public abstract void Reconnect();

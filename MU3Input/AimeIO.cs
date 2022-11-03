@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MU3Input
 {
@@ -40,9 +36,9 @@ namespace MU3Input
         [DllExport(CallingConvention = CallingConvention.Cdecl, ExportName = "aime_io_nfc_get_aime_id")]
         public static uint GetAimeId(byte unitNumber, IntPtr id, ulong size)
         {
-            if (Mu3IO.Io == null || !Mu3IO.Io.Scan) return 1;
+            if (Mu3IO.IO == null || !Mu3IO.IO.Scan) return 1;
             
-            Marshal.Copy(Mu3IO.Io.AimiId, 0, id, 10);
+            Marshal.Copy(Mu3IO.IO.AimiId, 0, id, 10);
             
             return 0;
         }
