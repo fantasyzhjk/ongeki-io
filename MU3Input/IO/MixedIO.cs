@@ -19,9 +19,8 @@ namespace MU3Input
                 var buttons = new byte[10];
                 for (int i = 0; i < 10; i++)
                 {
-                    long flag = 1 << i;
-                    var io = Items.First(item => item.Value.HasFlag((ControllerPart)flag)).Key;
-                    buttons[i] = io.Data.Buttons[i];
+                    var io = Items.FirstOrDefault(item => item.Value.HasFlag((ControllerPart)(1L << i))).Key;
+                    buttons[i] = io == null ? (byte)0 : io.Data.Buttons[i];
                 }
                 short lever = Items.First(item => item.Value.HasFlag(ControllerPart.Lever)).Key.Data.Lever;
                 IO aimeIO = Items.First(item => item.Value.HasFlag(ControllerPart.Aime)).Key;
