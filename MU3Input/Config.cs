@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
 
 namespace MU3Input
 {
@@ -16,10 +18,7 @@ namespace MU3Input
             configPath = Path.Combine(directoryName, "mu3input_config.json");
             if (Directory.Exists(configPath))
             {
-                Instance = JsonSerializer.Deserialize<Config>(File.ReadAllText(configPath),new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                });
+                Instance = JsonConvert.DeserializeObject<Config>(File.ReadAllText(configPath), new JsonSerializerSettings());
             }
             else
             {
@@ -42,10 +41,9 @@ namespace MU3Input
         }
         public void Save(string path)
         {
-            File.WriteAllText(path, JsonSerializer.Serialize(this, new JsonSerializerOptions() 
+            File.WriteAllText(path, JsonConvert.SerializeObject(this, new JsonSerializerSettings()
             {
-                WriteIndented = true, 
-                PropertyNameCaseInsensitive = true ,
+                Formatting = Formatting.Indented,
             }));
         }
         private Config() { }
@@ -53,8 +51,10 @@ namespace MU3Input
     }
     public class IOConfig
     {
+        [JsonConverter(typeof(StringEnumConverter))]
         public IOType Type { get; set; }
         public string Param { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public ControllerPart Part { get; set; }
     }
 
@@ -65,7 +65,7 @@ namespace MU3Input
     }
 
     [Flags]
-    public enum ControllerPart : long
+    public enum ControllerPart
     {
         None = 0,
         L1 = 1 << 0,
@@ -90,6 +90,6 @@ namespace MU3Input
         GameButtons = KeyBoard | Side,
         Buttons = GameButtons | Menu,
         GamePlay = GameButtons | Lever,
-        All = GamePlay | Aime,
+        All = GamePlay | Menu | Aime,
     }
 }

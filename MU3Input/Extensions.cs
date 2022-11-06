@@ -30,6 +30,19 @@ namespace MU3Input
             }
             return ret;
         }
+        public static byte[] ToBcd(this ulong value)
+        {
+            var length = value.ToString().Length / 2 + value.ToString().Length % 2;
+            byte[] ret = new byte[length];
+            for (int i = length - 1; i >= 0; i--)
+            {
+                ret[i] = (byte)(value % 10);
+                value /= 10;
+                ret[i] |= (byte)((value % 10) << 4);
+                value /= 10;
+            }
+            return ret;
+        }
 
     }
 }

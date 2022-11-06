@@ -10,7 +10,7 @@ namespace MU3Input
         public byte[] Buttons;
 
         public short Lever;
-        [MarshalAs(UnmanagedType.U1)] public bool Scan;
+        [MarshalAs(UnmanagedType.U1)] public byte Scan;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public byte[] AimiId;
@@ -101,7 +101,7 @@ namespace MU3Input
             }
         }
 
-        public bool Scan => Data.Scan;
+        public byte Scan => Data.Scan;
 
         public byte[] AimiId => Data.AimiId;
         public OptButtons OptButtonsStatus => Data.OptButton;

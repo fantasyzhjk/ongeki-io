@@ -66,7 +66,7 @@ namespace MU3Input
             }
             else if (buffer[0] == (byte)MessageType.Scan && buffer.Length == 12)
             {
-                data.Scan = buffer[1] > 0;
+                data.Scan = buffer[1];
                 byte[] aimeId = new ArraySegment<byte>(buffer, 2, 10).ToArray();
                 if (aimeId.All(n => n == 255))
                 {
@@ -100,19 +100,6 @@ namespace MU3Input
                 timer.Stop();
                 timer.Start();
             }
-        }
-        public static byte[] ToBcd(BigInteger value)
-        {
-            var length = value.ToString().Length / 2 + value.ToString().Length % 2;
-            byte[] ret = new byte[length];
-            for (int i = length - 1; i >= 0; i--)
-            {
-                ret[i] = (byte)(value % 10);
-                value /= 10;
-                ret[i] |= (byte)((value % 10) << 4);
-                value /= 10;
-            }
-            return ret;
         }
         private void SetLever(short lever)
         {

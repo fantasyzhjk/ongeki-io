@@ -7,6 +7,16 @@ namespace MU3Input
     {
         internal static IO IO;
 
+        static Mu3IO()
+        {
+            var io = new MixedIO();
+            foreach (var ioConfig in Config.Instance.IO)
+            {
+                io.Add(io.CreateIO(ioConfig.Type, ioConfig.Param), ioConfig.Part);
+            }
+            IO = io;
+        }
+
         [DllExport(ExportName = "mu3_io_get_api_version")]
         public static ushort GetVersion()
         {
@@ -17,19 +27,12 @@ namespace MU3Input
         public static uint Init()
         {
             if (Process.GetCurrentProcess().ProcessName != "amdaemon" &&
-                Process.GetCurrentProcess().ProcessName != "Debug" &&
-                Process.GetCurrentProcess().ProcessName != "TestSharp" &&
-                Process.GetCurrentProcess().ProcessName != "Test")
-                return 0;
+                  Process.GetCurrentProcess().ProcessName != "Debug" &&
+                  Process.GetCurrentProcess().ProcessName != "TestSharp" &&
+                  Process.GetCurrentProcess().ProcessName != "Test")
+                return 1;
+            else return 0;
 
-            var io = new MixedIO();
-            foreach (var ioConfig in Config.Instance.IO)
-            {
-                io.Add(io.CreateIO(ioConfig.Type, ioConfig.Param), ioConfig.Part);
-            }
-            IO = io;
-
-            return 0;
         }
 
         [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_poll")]

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace MU3Input
@@ -15,8 +16,8 @@ namespace MU3Input
             if (Process.GetCurrentProcess().ProcessName != "amdaemon" &&
                 Process.GetCurrentProcess().ProcessName != "Debug" &&
                 Process.GetCurrentProcess().ProcessName != "Test")
-                return 0;
-            
+                return 1;
+
             return 0;
         }
 
@@ -27,26 +28,38 @@ namespace MU3Input
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl, ExportName = "aime_io_nfc_get_felica_id")]
-        public static uint GetFelicaId(byte unitNumber, out ulong id)
+        public static unsafe uint GetFelicaId(byte unitNumber, ulong* id)
         {
-            id = 0;
-            return 1;
+            if (Mu3IO.IO == null || Mu3IO.IO.Scan != 2)
+            {
+                return 1;
+            }
+            else
+            {
+                ulong val = 0;
+                for (int i = 2; i < 10; i++)
+                {
+                    val = (val << 8) | Mu3IO.IO.AimiId[i];
+                }
+                *id = val;
+                return 0;
+            }
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl, ExportName = "aime_io_nfc_get_aime_id")]
         public static uint GetAimeId(byte unitNumber, IntPtr id, ulong size)
         {
-            if (Mu3IO.IO == null || !Mu3IO.IO.Scan) return 1;
-            
+            if (Mu3IO.IO == null || Mu3IO.IO.Scan != 1) return 1;
+
             Marshal.Copy(Mu3IO.IO.AimiId, 0, id, 10);
-            
+
             return 0;
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl, ExportName = "aime_io_led_set_color")]
         public static void SetColor(byte unitNumber, byte r, byte g, byte b)
         {
-           
+
         }
     }
 }

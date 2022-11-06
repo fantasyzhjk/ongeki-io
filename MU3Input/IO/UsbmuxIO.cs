@@ -81,7 +81,7 @@ namespace MU3Input
                     continue;
                 }
                 var temp = _inBuffer.ToStructure<OutputData>();
-                if (temp.Scan == true && temp.AimiId.All(n => n == 255))
+                if (temp.Scan == 1 && temp.AimiId.All(n => n == 255))
                 {
                     temp.AimiId = Utils.ReadOrCreateAimeTxt();
                 }

@@ -19,7 +19,7 @@ namespace MU3Input
                 var buttons = new byte[10];
                 for (int i = 0; i < 10; i++)
                 {
-                    var io = Items.FirstOrDefault(item => item.Value.HasFlag((ControllerPart)(1L << i))).Key;
+                    var io = Items.FirstOrDefault(item => item.Value.HasFlag((ControllerPart)(1 << i))).Key;
                     buttons[i] = io == null ? (byte)0 : io.Data.Buttons[i];
                 }
                 short lever = Items.First(item => item.Value.HasFlag(ControllerPart.Lever)).Key.Data.Lever;
@@ -33,6 +33,11 @@ namespace MU3Input
                     OptButton = Items.Select(item => item.Key.Data.OptButton).Aggregate((item1, item2) => item1 | item2),
                 };
             }
+        }
+
+        public MixedIO()
+        {
+            Items = new Dictionary<IO, ControllerPart>();
         }
 
         public IO CreateIO(IOType type, string param)
@@ -73,6 +78,7 @@ namespace MU3Input
 
         public bool Check(ControllerPart part1, params ControllerPart[] parts)
         {
+            if (parts.Length == 0) return true;
             ControllerPart part2 = parts.Aggregate((p1, p2) => p1 | p2);
             return (part1 & part2) == ControllerPart.None;
         }
