@@ -30,18 +30,41 @@ namespace MU3Input
         [DllExport(CallingConvention = CallingConvention.Cdecl, ExportName = "aime_io_nfc_get_felica_id")]
         public static unsafe uint GetFelicaId(byte unitNumber, ulong* id)
         {
-            if (Mu3IO.IO == null || Mu3IO.IO.Scan != 2)
+            if (Mu3IO.IO == null || Mu3IO.IO.Aime.Scan != 2)
             {
                 return 1;
             }
             else
             {
-                ulong val = 0;
-                for (int i = 2; i < 10; i++)
-                {
-                    val = (val << 8) | Mu3IO.IO.AimiId[i];
-                }
-                *id = val;
+                *id = Mu3IO.IO.Aime.IDm;
+                return 0;
+            }
+        }
+
+        [DllExport(CallingConvention = CallingConvention.Cdecl, ExportName = "aime_io_nfc_get_felica_pm")]
+        public static unsafe uint GetFelicaPm(byte unitNumber, ulong* pm)
+        {
+            if (Mu3IO.IO == null || Mu3IO.IO.Aime.Scan != 2)
+            {
+                return 1;
+            }
+            else
+            {
+                *pm = Mu3IO.IO.Aime.PMm;
+                return 0;
+            }
+        }
+
+        [DllExport(CallingConvention = CallingConvention.Cdecl, ExportName = "aime_io_nfc_get_felica_system_code")]
+        public static unsafe uint GetFelicaSystemCode(byte unitNumber, ushort* systemCode)
+        {
+            if (Mu3IO.IO == null || Mu3IO.IO.Aime.Scan != 2)
+            {
+                return 1;
+            }
+            else
+            {
+                *systemCode = Mu3IO.IO.Aime.SystemCode;
                 return 0;
             }
         }
@@ -49,9 +72,9 @@ namespace MU3Input
         [DllExport(CallingConvention = CallingConvention.Cdecl, ExportName = "aime_io_nfc_get_aime_id")]
         public static uint GetAimeId(byte unitNumber, IntPtr id, ulong size)
         {
-            if (Mu3IO.IO == null || Mu3IO.IO.Scan != 1) return 1;
+            if (Mu3IO.IO == null || Mu3IO.IO.Aime.Scan != 1) return 1;
 
-            Marshal.Copy(Mu3IO.IO.AimiId, 0, id, 10);
+            Marshal.Copy(Mu3IO.IO.Aime.ID, 0, id, 10);
 
             return 0;
         }

@@ -10,11 +10,10 @@ namespace MU3Input
         public byte[] Buttons;
 
         public short Lever;
-        [MarshalAs(UnmanagedType.U1)] public byte Scan;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-        public byte[] AimiId;
         public OptButtons OptButton;
+
+        public Aime Aime;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 64)]
@@ -100,10 +99,7 @@ namespace MU3Input
                 return Data.Lever;
             }
         }
-
-        public byte Scan => Data.Scan;
-
-        public byte[] AimiId => Data.AimiId;
+        public Aime Aime => Data.Aime;
         public OptButtons OptButtonsStatus => Data.OptButton;
 
         public abstract bool IsConnected { get; }
@@ -115,5 +111,27 @@ namespace MU3Input
     {
         Test = 0b01,
         Service = 0b10
+    }
+    [StructLayout(LayoutKind.Explicit, Size = 19)]
+    public unsafe struct Aime
+    {
+        [FieldOffset(0)]
+        [MarshalAs(UnmanagedType.U1)]
+        public byte Scan;
+
+        #region Felica
+        [FieldOffset(1)]
+        public ulong IDm;
+        [FieldOffset(9)]
+        public ulong PMm;
+        [FieldOffset(17)]
+        public ushort SystemCode;
+        #endregion
+
+        #region Mifare
+        [FieldOffset(1)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public byte[] ID;
+        #endregion
     }
 }

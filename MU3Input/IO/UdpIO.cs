@@ -22,7 +22,8 @@ namespace MU3Input
 
         public UdpIO(int port)
         {
-            data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
+            data = new OutputData() { Buttons = new byte[10]};
+            data.Aime.ID = new byte[10];
             client = new UdpClient(port);
             timer.Elapsed += Timer_Elapsed;
             new Thread(PollThread).Start();
@@ -64,15 +65,24 @@ namespace MU3Input
                 var value = (short)(buffer[2] << 8 | buffer[1]);
                 data.Lever = value;
             }
-            else if (buffer[0] == (byte)MessageType.Scan && buffer.Length == 12)
+            else if (buffer[0] == (byte)MessageType.Scan && buffer.Length >= 12 && buffer.Length <= 20)
             {
-                data.Scan = buffer[1];
-                byte[] aimeId = new ArraySegment<byte>(buffer, 2, 10).ToArray();
-                if (aimeId.All(n => n == 255))
+                data.Aime.Scan = buffer[1];
+                if (data.Aime.Scan == 1)
                 {
-                    aimeId = Utils.ReadOrCreateAimeTxt();
+                    byte[] aimeId = new ArraySegment<byte>(buffer, 2, 10).ToArray();
+                    if (aimeId.All(n => n == 255))
+                    {
+                        aimeId = Utils.ReadOrCreateAimeTxt();
+                    }
+                    data.Aime.ID = aimeId;
                 }
-                data.AimiId = aimeId;
+                else if (data.Aime.Scan == 2)
+                {
+                    data.Aime.IDm = BitConverter.ToUInt64(buffer, 2);
+                    data.Aime.PMm = BitConverter.ToUInt64(buffer, 10);
+                    data.Aime.SystemCode = BitConverter.ToUInt16(buffer, 18);
+                }
             }
             else if (buffer[0] == (byte)MessageType.Test && buffer.Length == 2)
             {
