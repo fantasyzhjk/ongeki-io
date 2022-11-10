@@ -65,19 +65,21 @@ namespace MU3Input
                 var value = (short)(buffer[2] << 8 | buffer[1]);
                 data.Lever = value;
             }
-            else if (buffer[0] == (byte)MessageType.Scan && (buffer.Length == 12 || buffer.Length == 20))
+            else if (buffer[0] == (byte)MessageType.Scan && (buffer.Length == 2 || buffer.Length == 12 || buffer.Length == 20))
             {
                 data.Aime.Scan = buffer[1];
-                if (data.Aime.Scan == 1)
+                if (data.Aime.Scan == 0)
+                {
+
+                }
+                else if (data.Aime.Scan == 1)
                 {
                     byte[] aimeId = new ArraySegment<byte>(buffer, 2, 10).ToArray();
                     if (aimeId.All(n => n == 255))
                     {
                         aimeId = Utils.ReadOrCreateAimeTxt();
                     }
-                    var mifare = new Mifare();
-                    Marshal.Copy(aimeId, 0, (IntPtr)mifare.ID, 10);
-                    data.Aime.Mifare = mifare;
+                    data.Aime.Mifare = Mifare.Create(aimeId);
                 }
                 else if (data.Aime.Scan == 2)
                 {
@@ -129,20 +131,6 @@ namespace MU3Input
                 client?.SendAsync(new byte[] { (byte)MessageType.SetLed }.Concat(BitConverter.GetBytes(data)).ToArray(), 5, savedEP);
             }
         }
-        enum MessageType : byte
-        {
-            // 控制器向IO发送的
-            ButtonStatus = 1,
-            MoveLever = 2,
-            Scan = 3,
-            Test = 4,
-            RequestValues = 5,
-            // IO向控制器发送的
-            SetLed = 6,
-            SetLever = 7,
-            Service = 8,
-            // 寻找在线设备
-            Hello = 255
-        }
+        
     }
 }
