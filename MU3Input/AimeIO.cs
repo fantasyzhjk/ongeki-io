@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace MU3Input
@@ -8,7 +9,7 @@ namespace MU3Input
     public static class AimiIO
     {
         [DllExport(CallingConvention = CallingConvention.Cdecl, ExportName = "aime_io_get_api_version")]
-        public static ushort GetVersion() => 0x0101;
+        public static ushort GetVersion() => 0x0200;
 
         [DllExport(CallingConvention = CallingConvention.Cdecl, ExportName = "aime_io_init")]
         public static uint Init()
@@ -36,7 +37,7 @@ namespace MU3Input
             }
             else
             {
-                *id = Mu3IO.IO.Aime.IDm;
+                *id = Mu3IO.IO.Aime.Felica.IDm;
                 return 0;
             }
         }
@@ -50,7 +51,7 @@ namespace MU3Input
             }
             else
             {
-                *pm = Mu3IO.IO.Aime.PMm;
+                *pm = Mu3IO.IO.Aime.Felica.PMm;
                 return 0;
             }
         }
@@ -64,17 +65,20 @@ namespace MU3Input
             }
             else
             {
-                *systemCode = Mu3IO.IO.Aime.SystemCode;
+                *systemCode = Mu3IO.IO.Aime.Felica.SystemCode;
                 return 0;
             }
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl, ExportName = "aime_io_nfc_get_aime_id")]
-        public static uint GetAimeId(byte unitNumber, IntPtr id, ulong size)
+        public static unsafe uint GetAimeId(byte unitNumber, byte* id, ulong size)
         {
             if (Mu3IO.IO == null || Mu3IO.IO.Aime.Scan != 1) return 1;
-
-            Marshal.Copy(Mu3IO.IO.Aime.ID, 0, id, 10);
+            Aime aime = Mu3IO.IO.Aime;
+            for(int i = 0; i < 10; i++)
+            {
+                id[i]=aime.Mifare.ID[i];
+            }
 
             return 0;
         }

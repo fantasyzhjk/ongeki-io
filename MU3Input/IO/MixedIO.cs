@@ -28,8 +28,7 @@ namespace MU3Input
                 {
                     Buttons = buttons,
                     Lever = lever,
-                    Scan = aimeIO.Scan,
-                    AimiId = aimeIO.AimiId,
+                    Aime = aimeIO.Aime,
                     OptButton = Items.Select(item => item.Key.Data.OptButton).Aggregate((item1, item2) => item1 | item2),
                 };
             }
@@ -44,14 +43,14 @@ namespace MU3Input
         {
             switch (type)
             {
-                case IOType.Hid:
-                    return new HidIO();
+                //case IOType.Hid:
+                //    return new HidIO();
                 case IOType.Udp:
                     return new UdpIO(int.Parse(param));
-                case IOType.Tcp:
-                    return new TcpIO(int.Parse(param));
-                case IOType.Usbmux:
-                    return new UsbmuxIO(ushort.Parse(param));
+                //case IOType.Tcp:
+                //    return new TcpIO(int.Parse(param));
+                //case IOType.Usbmux:
+                //    return new UsbmuxIO(ushort.Parse(param));
                 default: throw new ArgumentException($"{type}: Unknown IO type");
             }
         }

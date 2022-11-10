@@ -1,6 +1,8 @@
 ﻿using SimpleHID.Raw;
 
+using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace MU3Input
@@ -19,7 +21,7 @@ namespace MU3Input
 
         public HidIO()
         {
-            data = new OutputData() { Buttons = new byte[10], AimiId = new byte[10] };
+            data = new OutputData() { Buttons = new byte[10]};
             Reconnect();
             new Thread(PollThread).Start();
         }
@@ -40,7 +42,7 @@ namespace MU3Input
         };
 
 
-        private void PollThread()
+        private unsafe void PollThread()
         {
             while (true)
             {
@@ -57,9 +59,24 @@ namespace MU3Input
 
                 var temp = _inBuffer.ToStructure<OutputData>();
 
-                if (temp.AimiId.All(n => n == 255))
+                if (temp.Aime.Scan == 1)
                 {
-                    temp.AimiId = Utils.ReadOrCreateAimeTxt();
+                    bool flag = true;
+                    for(int i = 0; i < 10; i++)
+                    {
+                        if (temp.Aime.Mifare.ID[i] != 255)
+                        {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag)
+                    {
+                        byte[] bytes = Utils.ReadOrCreateAimeTxt();
+                        Mifare mifare = new Mifare();
+                        Marshal.Copy(bytes, 0, (IntPtr)mifare.ID, 10);
+                        data.Aime.Mifare = mifare;
+                    }
                 }
                 data = temp;
             }

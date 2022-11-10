@@ -112,26 +112,38 @@ namespace MU3Input
         Test = 0b01,
         Service = 0b10
     }
-    [StructLayout(LayoutKind.Explicit, Size = 19)]
+    [StructLayout(LayoutKind.Explicit, Pack = 1, Size = 19)]
     public unsafe struct Aime
     {
         [FieldOffset(0)]
         [MarshalAs(UnmanagedType.U1)]
         public byte Scan;
 
-        #region Felica
         [FieldOffset(1)]
-        public ulong IDm;
-        [FieldOffset(9)]
-        public ulong PMm;
-        [FieldOffset(17)]
-        public ushort SystemCode;
-        #endregion
+        public Felica Felica;
 
-        #region Mifare
         [FieldOffset(1)]
+        public Mifare Mifare;
+    }
+    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 18)]
+    public unsafe struct Felica
+    {
+        public ulong IDm;
+        public ulong PMm;
+        public ushort SystemCode;
+    }
+    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 10)]
+    public unsafe struct Mifare
+    {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-        public byte[] ID;
-        #endregion
+        public fixed byte ID[10];
+
+        public override string ToString()
+        {
+            Mifare mifare = this;
+            byte[] bytes = new byte[10];
+            Marshal.Copy((IntPtr)mifare.ID, bytes, 0, 10);
+            return BitConverter.ToString(bytes).Replace("-", "");
+        }
     }
 }
