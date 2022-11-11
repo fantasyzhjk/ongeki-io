@@ -138,6 +138,13 @@ namespace MU3Input
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public fixed byte ID[10];
 
+        public static Mifare Create(byte[] bytes)
+        {
+            Mifare mifare = new Mifare();
+            Marshal.Copy(bytes, 0, (IntPtr)mifare.ID, 10);
+            return mifare;
+        }
+
         public override string ToString()
         {
             Mifare mifare = this;
@@ -145,5 +152,20 @@ namespace MU3Input
             Marshal.Copy((IntPtr)mifare.ID, bytes, 0, 10);
             return BitConverter.ToString(bytes).Replace("-", "");
         }
+    }
+    enum MessageType : byte
+    {
+        // 控制器向IO发送的
+        ButtonStatus = 1,
+        MoveLever = 2,
+        Scan = 3,
+        Test = 4,
+        Service = 5,
+        RequestValues = 6,
+        // IO向控制器发送的
+        SetLed = 20,
+        SetLever = 21,
+        // 寻找在线设备
+        Hello = 255
     }
 }

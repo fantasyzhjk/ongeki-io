@@ -73,9 +73,7 @@ namespace MU3Input
                     if (flag)
                     {
                         byte[] bytes = Utils.ReadOrCreateAimeTxt();
-                        Mifare mifare = new Mifare();
-                        Marshal.Copy(bytes, 0, (IntPtr)mifare.ID, 10);
-                        data.Aime.Mifare = mifare;
+                        temp.Aime.Mifare = Mifare.Create(bytes);
                     }
                 }
                 data = temp;
