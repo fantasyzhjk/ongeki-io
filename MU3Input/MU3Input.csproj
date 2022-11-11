@@ -50,6 +50,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AimeIO.cs" />
+    <Compile Include="IOTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IOTest.Designer.cs">
+      <DependentUpon>IOTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="IO\MixedIO.cs" />
     <Compile Include="IO\TcpIO.cs" />
     <Compile Include="IO\UsbmuxIO.cs" />
@@ -95,6 +101,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="IOTest.resx">
+      <DependentUpon>IOTest.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ImportGroup Label=".NET DllExport">

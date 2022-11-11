@@ -68,7 +68,11 @@ namespace MU3Input
             else if (buffer[0] == (byte)MessageType.Scan && (buffer.Length == 12 || buffer.Length == 20))
             {
                 data.Aime.Scan = buffer[1];
-                if (data.Aime.Scan == 1)
+                if(data.Aime.Scan == 0)
+                {
+
+                }
+                else if (data.Aime.Scan == 1)
                 {
                     byte[] aimeId = new ArraySegment<byte>(buffer, 2, 10).ToArray();
                     if (aimeId.All(n => n == 255))

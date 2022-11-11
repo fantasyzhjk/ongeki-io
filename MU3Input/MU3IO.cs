@@ -1,11 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace MU3Input
 {
     public static class Mu3IO
     {
         internal static IO IO;
+        private static IOTest _test;
 
         static Mu3IO()
         {
@@ -15,6 +17,9 @@ namespace MU3Input
                 io.Add(io.CreateIO(ioConfig.Type, ioConfig.Param), ioConfig.Part);
             }
             IO = io;
+            _test = new IOTest(io);
+
+            Task.Run(() => _test.ShowDialog());
         }
 
         [DllExport(ExportName = "mu3_io_get_api_version")]
@@ -45,6 +50,8 @@ namespace MU3Input
             {
                 IO.Reconnect();
             }
+
+            _test.UpdateData();
 
             return 0;
         }
@@ -92,6 +99,7 @@ namespace MU3Input
         public static void SetLed(uint data)
         {
             IO.SetLed(data);
+            _test.SetColor(data);
         }
 
 
