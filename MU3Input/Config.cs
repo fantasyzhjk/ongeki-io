@@ -16,7 +16,7 @@ namespace MU3Input
             var location = typeof(Mu3IO).Assembly.Location;
             string directoryName = Path.GetDirectoryName(location);
             configPath = Path.Combine(directoryName, "mu3input_config.json");
-            if (Directory.Exists(configPath))
+            if (File.Exists(configPath))
             {
                 Instance = JsonConvert.DeserializeObject<Config>(File.ReadAllText(configPath), new JsonSerializerSettings());
             }
