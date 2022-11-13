@@ -1,6 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using static MU3Input.KeyboardIO;
 
 namespace MU3Input
 {
@@ -29,7 +34,7 @@ namespace MU3Input
                     Buttons = buttons,
                     Lever = lever,
                     Aime = aimeIO.Aime,
-                    OptButton = Items.Select(item => item.Key.Data.OptButton).Aggregate((item1, item2) => item1 | item2),
+                    OptButtons = Items.Select(item => item.Key.Data.OptButtons).Aggregate((item1, item2) => item1 | item2),
                 };
             }
         }
@@ -39,18 +44,20 @@ namespace MU3Input
             Items = new Dictionary<IO, ControllerPart>();
         }
 
-        public IO CreateIO(IOType type, string param)
+        public IO CreateIO(IOType type, JToken param)
         {
             switch (type)
             {
                 case IOType.Hid:
                     return new HidIO();
                 case IOType.Udp:
-                    return new UdpIO(int.Parse(param));
+                    return new UdpIO(param.Value<int>());
                 case IOType.Tcp:
-                    return new TcpIO(int.Parse(param));
+                    return new TcpIO(param.Value<int>());
                 case IOType.Usbmux:
-                    return new UsbmuxIO(ushort.Parse(param));
+                    return new UsbmuxIO(param.Value<ushort>());
+                case IOType.Keyboard:
+                    return new KeyboardIO(param.ToObject<KeyboardIOConfig>());
                 default: throw new ArgumentException($"{type}: Unknown IO type");
             }
         }

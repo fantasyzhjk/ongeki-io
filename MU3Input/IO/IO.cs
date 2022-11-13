@@ -11,7 +11,7 @@ namespace MU3Input
 
         public short Lever;
 
-        public OptButtons OptButton;
+        public OptButtons OptButtons;
 
         public Aime Aime;
     }
@@ -100,7 +100,7 @@ namespace MU3Input
             }
         }
         public Aime Aime => Data.Aime;
-        public OptButtons OptButtonsStatus => Data.OptButton;
+        public OptButtons OptButtonsStatus => Data.OptButtons;
 
         public abstract bool IsConnected { get; }
         public abstract void Reconnect();
@@ -109,6 +109,7 @@ namespace MU3Input
     [Flags]
     public enum OptButtons : byte
     {
+        None = 0b00,
         Test = 0b01,
         Service = 0b10
     }

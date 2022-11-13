@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace MU3Input
                     new IOConfig()
                     {
                         Type = IOType.Udp,
-                        Param = "4354",
+                        Param = 4354,
                         Part = ControllerPart.All
                     }
                 };
@@ -53,7 +54,7 @@ namespace MU3Input
     {
         [JsonConverter(typeof(StringEnumConverter))]
         public IOType Type { get; set; }
-        public string Param { get; set; }
+        public JToken Param { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public ControllerPart Part { get; set; }
     }
@@ -61,7 +62,7 @@ namespace MU3Input
 
     public enum IOType
     {
-        Hid, Udp, Tcp, Usbmux
+        Hid, Udp, Tcp, Usbmux, Keyboard
     }
 
     [Flags]

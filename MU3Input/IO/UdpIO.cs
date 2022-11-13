@@ -90,15 +90,15 @@ namespace MU3Input
             }
             else if (buffer[0] == (byte)MessageType.Test && buffer.Length == 2)
             {
-                if (buffer[1] == 0) data.OptButton ^= OptButtons.Test;
-                else data.OptButton |= OptButtons.Test;
-                Debug.WriteLine(Data.OptButton);
+                if (buffer[1] == 0) data.OptButtons ^= OptButtons.Test;
+                else data.OptButtons |= OptButtons.Test;
+                Debug.WriteLine(Data.OptButtons);
             }
             else if (buffer[0] == (byte)MessageType.Service && buffer.Length == 2)
             {
-                if (buffer[1] == 0) data.OptButton ^= OptButtons.Service;
-                else data.OptButton |= OptButtons.Service;
-                Debug.WriteLine(Data.OptButton);
+                if (buffer[1] == 0) data.OptButtons ^= OptButtons.Service;
+                else data.OptButtons |= OptButtons.Service;
+                Debug.WriteLine(Data.OptButtons);
             }
             else if (buffer[0] == (byte)MessageType.RequestValues && buffer.Length == 1)
             {
