@@ -5,10 +5,13 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace MU3Input
 {
@@ -29,8 +32,17 @@ namespace MU3Input
         public override void SetLed(uint data) { }
 
 
+        StringBuilder sb = new StringBuilder();
         private OutputData GetData()
         {
+            IntPtr handle = User32.GetForegroundWindow();
+            User32.GetWindowText(handle, sb, 16);
+            string windowText = sb.ToString();
+            if (windowText != "Otoge" && windowText != "Ongeki IO Debug")
+            {
+                return new OutputData() { Buttons=new byte[10] };
+            }
+
             byte[] buttons = new byte[] {
                 Pressed(config.L1),
                 Pressed(config.L2),
@@ -64,6 +76,7 @@ namespace MU3Input
         }
         private byte Pressed(Keys key)
         {
+
             return User32.GetAsyncKeyState(key) == 0 ? (byte)0 : (byte)1;
         }
         public class KeyboardIOConfig

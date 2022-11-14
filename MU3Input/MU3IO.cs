@@ -19,7 +19,7 @@ namespace MU3Input
             IO = io;
             _test = new IOTest(io);
 
-            //Task.Run(() => _test.ShowDialog());
+            Task.Run(() => _test.ShowDialog());
         }
 
         [DllExport(ExportName = "mu3_io_get_api_version")]
