@@ -21,7 +21,7 @@ namespace MU3Input
 
         public HidIO()
         {
-            data = new OutputData() { Buttons = new byte[10]};
+            data = new OutputData() { Buttons = new byte[10] };
             Reconnect();
             new Thread(PollThread).Start();
         }
@@ -57,12 +57,16 @@ namespace MU3Input
                     continue;
                 }
 
-                var temp = _inBuffer.ToStructure<OutputData>();
-
+                OutputData temp = new OutputData();
+                temp.Buttons = new ArraySegment<byte>(_inBuffer, 0, 10).ToArray();
+                temp.Lever = BitConverter.ToInt16(_inBuffer, 10);
+                temp.OptButtons = (OptButtons)_inBuffer[12];
+                temp.Aime.Scan = _inBuffer[13];
                 if (temp.Aime.Scan == 1)
                 {
+                    temp.Aime.Mifare = Mifare.Create(new ArraySegment<byte>(_inBuffer, 14, 10).ToArray());
                     bool flag = true;
-                    for(int i = 0; i < 10; i++)
+                    for (int i = 0; i < 10; i++)
                     {
                         if (temp.Aime.Mifare.ID[i] != 255)
                         {
@@ -75,6 +79,12 @@ namespace MU3Input
                         byte[] bytes = Utils.ReadOrCreateAimeTxt();
                         temp.Aime.Mifare = Mifare.Create(bytes);
                     }
+                }
+                if(temp.Aime.Scan == 2)
+                {
+                    temp.Aime.Felica.IDm = BitConverter.ToUInt64(_inBuffer, 14);
+                    temp.Aime.Felica.PMm = BitConverter.ToUInt64(_inBuffer, 22);
+                    temp.Aime.Felica.SystemCode = BitConverter.ToUInt16(_inBuffer, 30);
                 }
                 data = temp;
             }
