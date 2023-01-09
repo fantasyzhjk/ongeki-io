@@ -72,12 +72,12 @@ namespace MU3Input
                     else if (_io.Aime.Scan == 1)
                     {
                         label1.Text = "AimeID";
-                        textAimiId.Text = _io.Aime.Mifare.ToString();
+                        textAimiId.Text = BitConverter.ToString(_io.Aime.ID).Replace("-", "");
                     }
                     else if (_io.Aime.Scan == 2)
                     {
                         label1.Text = "IDm";
-                        textAimiId.Text = "0x" + BitConverter.ToUInt64(BitConverter.GetBytes(_io.Aime.Felica.IDm).Reverse().ToArray(), 0).ToString("X16");
+                        textAimiId.Text = "0x" + BitConverter.ToUInt64(BitConverter.GetBytes(_io.Aime.IDm).Reverse().ToArray(), 0).ToString("X16");
                     }
                 }));
             }
