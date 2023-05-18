@@ -62,7 +62,7 @@ namespace MU3Input
             switch (type)
             {
                 case IOType.Hid:
-                    return new HidIO();
+                    return new HidIO(param.ToObject<HidIOConfig>());
                 case IOType.Udp:
                     return new UdpIO(param.Value<int>());
                 case IOType.Tcp:
