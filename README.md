@@ -16,3 +16,7 @@ path=MU3Input.dll
 ```
 
 You can use Jetbrains Rider or Visual Studio to compile.
+
+Note:
+
+- 为了NativeAOT牺牲了太多（哭）
