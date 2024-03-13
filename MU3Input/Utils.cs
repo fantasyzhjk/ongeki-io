@@ -11,10 +11,11 @@ namespace MU3Input
         public static byte[] ReadOrCreateAimeTxt()
         {
             byte[] aimeId;
-            var location = Assembly.GetCallingAssembly().Location;
+            var location = System.AppContext.BaseDirectory;
             string directoryName = Path.GetDirectoryName(location);
             string deviceDirectory = Path.Combine(directoryName, "DEVICE");
             string aimeIdPath = Path.Combine(deviceDirectory, "aime.txt");
+            Console.WriteLine("load_aime: {0}", aimeIdPath);
             try
             {
                 var id = BigInteger.Parse(File.ReadAllText(aimeIdPath));

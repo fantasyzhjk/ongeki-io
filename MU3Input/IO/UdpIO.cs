@@ -21,10 +21,10 @@ namespace MU3Input
         };
         protected OutputData data;
 
-        public UdpIO(int port)
+        public UdpIO(UDPIOConfig cfg)
         {
             data = new OutputData() { Buttons = new byte[10], Aime = new Aime() { Data = new byte[18] } };
-            client = new UdpClient(port);
+            client = new UdpClient(cfg.ip, cfg.port);
             timer.Elapsed += Timer_Elapsed;
             new Thread(PollThread).Start();
         }

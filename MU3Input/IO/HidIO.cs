@@ -4,13 +4,11 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows.Forms;
 
 using static MU3Input.KeyboardIO;
 
 namespace MU3Input
 {
-    // ReSharper disable once InconsistentNaming
     public class HidIO : IO
     {
         private HidIOConfig config;
@@ -38,6 +36,9 @@ namespace MU3Input
                 _hid.Close();
 
             _openCount = _hid.Open(1, VID, PID);
+            if (_openCount != 0) {
+                Console.WriteLine("已连接 {}", _openCount);
+            }
         }
 
         public static int[] bitPosMap =
@@ -150,11 +151,5 @@ namespace MU3Input
         }
 
     }
-    public class HidIOConfig
-    {
-        public bool AutoCal { get; set; } = true;
-        public short LeverLeft { get; set; } = short.MaxValue;
-        public short LeverRight { get; set; } = short.MinValue;
-        public bool InvertLever { get; set; } = true;
-    }
+
 }

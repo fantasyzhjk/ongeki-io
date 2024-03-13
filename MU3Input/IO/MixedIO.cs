@@ -1,10 +1,8 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using static MU3Input.KeyboardIO;
 
 namespace MU3Input
@@ -42,13 +40,14 @@ namespace MU3Input
                     if (!item.Key.IsConnected)
                         item.Key.Reconnect();
                 }
-                return new OutputData
+                var data = new OutputData
                 {
                     Buttons = buttons,
                     Lever = lever,
                     Aime = aimeIO?.Aime ?? default,
                     OptButtons = Items.Select(item => item.Key.Data.OptButtons).Aggregate((item1, item2) => item1 | item2),
                 };
+                return data;
             }
         }
 
@@ -57,23 +56,7 @@ namespace MU3Input
             Items = new Dictionary<IO, ControllerPart>();
         }
 
-        public IO CreateIO(IOType type, JToken param)
-        {
-            switch (type)
-            {
-                case IOType.Hid:
-                    return new HidIO(param.ToObject<HidIOConfig>());
-                case IOType.Udp:
-                    return new UdpIO(param.Value<int>());
-                case IOType.Tcp:
-                    return new TcpIO(param.Value<int>());
-                case IOType.Usbmux:
-                    return new UsbmuxIO(param.Value<ushort>());
-                case IOType.Keyboard:
-                    return new KeyboardIO(param.ToObject<KeyboardIOConfig>());
-                default: throw new ArgumentException($"{type}: Unknown IO type");
-            }
-        }
+
         public void Add(IO io, ControllerPart part)
         {
             if (Check(part, Items.Select(i => i.Value).ToArray()))

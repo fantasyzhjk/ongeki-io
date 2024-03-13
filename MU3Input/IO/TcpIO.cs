@@ -19,9 +19,10 @@ namespace MU3Input
         private NetworkStream networkStream;
         protected OutputData data;
 
-        public TcpIO(int port)
+        public TcpIO(TCPIOConfig cfg)
         {
-            this.port = port;
+            this.port = cfg.port;
+            this.ip = cfg.ip;
             data = new OutputData() { Buttons = new byte[10], Aime = new Aime() { Data = new byte[18] } };
             new Thread(PollThread).Start();
 

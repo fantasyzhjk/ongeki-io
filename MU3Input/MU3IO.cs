@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace MU3Input
@@ -9,48 +11,52 @@ namespace MU3Input
     {
         internal static IO IO;
         internal static byte[] LedData;
-        private static IOTest _test;
-
         private static MemoryMappedFile mmf;
         private static MemoryMappedViewAccessor accessor;
+
+        public static IO CreateIO(IOConfig config)
+        {
+            if (config.hid is not null)
+                return new HidIO(config.hid);
+            if (config.kbd is not null)
+                return new KeyboardIO(config.kbd);
+            if (config.tcp is not null)
+                return new TcpIO(config.tcp);
+            if (config.udp is not null)
+                return new UdpIO(config.udp);
+            throw new ArgumentException($"Unknown IO type");
+        }
 
         static Mu3IO()
         {
             var io = new MixedIO();
             foreach (var ioConfig in Config.Instance.IO)
             {
-                io.Add(io.CreateIO(ioConfig.Type, ioConfig.Param), ioConfig.Part);
+                io.Add(CreateIO(ioConfig), ioConfig.Part);
             }
             IO = io;
-            _test = new IOTest(io);
 
             //与mod共享内存以接收LED数据
             mmf = MemoryMappedFile.CreateOrOpen("mu3_led_data", 66 * 3);
             accessor = mmf.CreateViewAccessor(0, 66 * 3);
             LedData = new byte[6];
-
-            Task.Run(() => _test.ShowDialog());
         }
 
-        [DllExport(ExportName = "mu3_io_get_api_version")]
         public static ushort GetVersion()
         {
             return 0x0102;
         }
 
-        [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_init")]
         public static uint Init()
         {
-            if (Process.GetCurrentProcess().ProcessName != "amdaemon" &&
-                  Process.GetCurrentProcess().ProcessName != "Debug" &&
-                  Process.GetCurrentProcess().ProcessName != "TestSharp" &&
-                  Process.GetCurrentProcess().ProcessName != "Test")
+            string processName = Process.GetCurrentProcess().ProcessName;
+            Console.WriteLine(processName);
+            if (processName is not "amdaemon" or "Debug" or "Test" or "a")
                 return 1;
-            else return 0;
-
+            else
+                return 0;
         }
 
-        [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_poll")]
         public static uint Poll()
         {
             if (IO == null)
@@ -64,60 +70,51 @@ namespace MU3Input
             int leftBase = 0;
             accessor.ReadArray(leftBase, LedData, 0, 3);
 
-            int rightBase  = 59 * 3;
+            int rightBase = 59 * 3;
             accessor.ReadArray(rightBase, LedData, 3, 3);
-
-            _test.UpdateData();
 
             return 0;
         }
 
-        [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_get_opbtns")]
-        public static void GetOpButtons(out byte opbtn)
+        public static unsafe void GetOpButtons(byte* opbtn)
         {
             if (IO == null || !IO.IsConnected)
             {
-                opbtn = 0;
+                *opbtn = 0;
                 return;
             }
 
-            opbtn = (byte)IO.OptButtonsStatus;
+            *opbtn = (byte)IO.OptButtonsStatus;
         }
 
-        [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_get_gamebtns")]
-        public static void GetGameButtons(out byte left, out byte right)
+        public static unsafe void GetGameButtons(byte* left, byte* right)
         {
             if (IO == null || !IO.IsConnected)
             {
-                left = 0;
-                right = 0;
+                *left = 0;
+                *right = 0;
                 return;
             }
 
-            left = IO.LeftButton;
-            right = IO.RightButton;
+            *left = IO.LeftButton;
+            *right = IO.RightButton;
         }
 
-        [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_get_lever")]
-        public static void GetLever(out short pos)
+        public static unsafe void GetLever(short* pos)
         {
-            pos = 0;
+            *pos = 0;
             if (IO == null || !IO.IsConnected)
             {
-                pos = 0;
+                *pos = 0;
                 return;
             }
 
-            pos = IO.Lever;
+            *pos = IO.Lever;
         }
 
-        [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_set_led")]
         public static void SetLed(uint data)
         {
             IO.SetLed(data);
-            _test.SetColor(data);
         }
-
-
     }
 }

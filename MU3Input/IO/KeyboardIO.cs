@@ -1,17 +1,10 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace MU3Input
 {
@@ -36,13 +29,13 @@ namespace MU3Input
         bool coinAvailable = true;
         private OutputData GetData()
         {
-            IntPtr handle = User32.GetForegroundWindow();
-            User32.GetWindowText(handle, sb, 16);
-            string windowText = sb.ToString();
-            if (windowText != "Otoge" && windowText != "Ongeki IO Debug")
-            {
-                return new OutputData() { Buttons = new byte[10], Aime = new Aime() { Data = new byte[18] } };
-            }
+            // IntPtr handle = User32.GetForegroundWindow();
+            // User32.GetWindowText(handle, sb, 16);
+            // string windowText = sb.ToString();
+            // if (windowText != "Otoge" && windowText != "Ongeki IO Debug")
+            // {
+            //     return new OutputData() { Buttons = new byte[10], Aime = new Aime() { Data = new byte[18] } };
+            // }
 
             byte[] buttons = new byte[] {
                 Pressed(config.L1),
@@ -75,7 +68,11 @@ namespace MU3Input
             {
                 coinAvailable = true;
             }
-            OptButtons optButtons = (OptButtons)(testPressed << 0 | servicePressed << 1 | coinPressed << 2);
+            // OptButtons optButtons = (OptButtons)(testPressed << 0 | servicePressed << 1 | coinPressed << 2);
+            OptButtons optButtons = OptButtons.None;
+            if (testPressed > 0) optButtons |= OptButtons.Test;
+            if (servicePressed > 0) optButtons |= OptButtons.Service;
+            if (coinPressed > 0) optButtons |= OptButtons.Coin;
             Aime aime = new Aime()
             {
                 Scan = Pressed(config.Scan),
@@ -94,27 +91,11 @@ namespace MU3Input
                 Aime = aime
             };
         }
-        private byte Pressed(Keys key)
+        private byte Pressed(int key)
         {
 
             return User32.GetAsyncKeyState(key) == 0 ? (byte)0 : (byte)1;
         }
-        public class KeyboardIOConfig
-        {
-            public Keys L1 { get; set; } = (Keys)(-1);
-            public Keys L2 { get; set; } = (Keys)(-1);
-            public Keys L3 { get; set; } = (Keys)(-1);
-            public Keys LSide { get; set; } = (Keys)(-1);
-            public Keys LMenu { get; set; } = (Keys)(-1);
-            public Keys R1 { get; set; } = (Keys)(-1);
-            public Keys R2 { get; set; } = (Keys)(-1);
-            public Keys R3 { get; set; } = (Keys)(-1);
-            public Keys RSide { get; set; } = (Keys)(-1);
-            public Keys RMenu { get; set; } = (Keys)(-1);
-            public Keys Test { get; set; } = (Keys)(-1);
-            public Keys Service { get; set; } = (Keys)(-1);
-            public Keys Coin { get; set; } = (Keys)(-1);
-            public Keys Scan { get; set; } = (Keys)(-1);
-        }
+ 
     }
 }
