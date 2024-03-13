@@ -6,8 +6,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PublishAot>true</PublishAot>
     <StripSymbols>false</StripSymbols>
+    <NoWarn>CA1416</NoWarn>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
-
+  
   <ItemGroup>
   </ItemGroup>
 

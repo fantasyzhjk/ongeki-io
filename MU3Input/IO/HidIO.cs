@@ -12,17 +12,17 @@ namespace MU3Input
     public class HidIO : IO
     {
         private HidIOConfig config;
+        private short leverDir = 0;
         protected int _openCount = 0;
         private byte[] _inBuffer = new byte[64];
         private readonly SimpleRawHID _hid = new SimpleRawHID();
-        private const ushort VID = 0x2341;
-        private const ushort PID = 0x8036;
         protected OutputData data;
 
 
         public HidIO(HidIOConfig config)
         {
             this.config = config;
+            leverDir = (short)((config.LeverLeft - config.LeverRight < 0) ? -1 : 1);
             data = new OutputData() { Buttons = new byte[10], Aime = new Aime() { Data = new byte[18] } };
             Reconnect();
             new Thread(PollThread).Start();
@@ -35,7 +35,7 @@ namespace MU3Input
             if (IsConnected)
                 _hid.Close();
 
-            _openCount = _hid.Open(1, VID, PID);
+            _openCount = _hid.Open(1, config.VID, config.PID);
             if (_openCount != 0) {
                 Console.WriteLine("已连接 {}", _openCount);
             }
@@ -45,6 +45,12 @@ namespace MU3Input
         {
             23, 19, 22, 20, 21, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6
         };
+
+        
+        private long map(long x, long in_min, long in_max, long out_min, long out_max)
+        {
+            return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+        }
 
 
         private unsafe void PollThread()
@@ -57,6 +63,7 @@ namespace MU3Input
                 var len = _hid.Receive(0, ref _inBuffer, 64, 1000);
                 if (len < 0)
                 {
+                    Console.WriteLine("hid设备已断开");
                     _openCount = 0;
                     _hid.Close();
                     continue;
@@ -65,54 +72,64 @@ namespace MU3Input
                 OutputData temp = new OutputData();
                 temp.Buttons = new ArraySegment<byte>(_inBuffer, 0, 10).ToArray();
                 short lever;
-                if (config.InvertLever)
-                {
-                    lever = (short)(-BitConverter.ToInt16(_inBuffer, 10) - 1);
-                }
-                else
-                {
-                    lever = BitConverter.ToInt16(_inBuffer, 10);
-                }
+                lever = BitConverter.ToInt16(_inBuffer, 10);
                 if (config.AutoCal)
                 {
-                    if (lever < config.LeverLeft)
+                    if (leverDir == -1)
                     {
-                        config.LeverLeft = lever;
-                        Console.WriteLine($"Set lever range: {config.LeverLeft}-{config.LeverRight}");
+                        if (lever < config.LeverLeft)
+                        {
+                            config.LeverLeft = lever;
+                            Console.WriteLine($"Set lever range: {config.LeverLeft}-{config.LeverRight}");
+                        }
+                        if (lever > config.LeverRight)
+                        {
+                            config.LeverRight = lever;
+                            Console.WriteLine($"Set lever range: {config.LeverLeft}-{config.LeverRight}");
+                        }
                     }
-                    if (lever > config.LeverRight)
+                    if (leverDir == 1)
                     {
-                        config.LeverRight = lever;
-                        Console.WriteLine($"Set lever range: {config.LeverLeft}-{config.LeverRight}");
+                        if (lever > config.LeverLeft)
+                        {
+                            config.LeverLeft = lever;
+                            Console.WriteLine($"Set lever range: {config.LeverLeft}-{config.LeverRight}");
+                        }
+                        if (lever < config.LeverRight)
+                        {
+                            config.LeverRight = lever;
+                            Console.WriteLine($"Set lever range: {config.LeverLeft}-{config.LeverRight}");
+                        }
                     }
                 }
                 if (config.LeverRight != config.LeverLeft)
                 {
-                    double normLever = (lever - config.LeverLeft) / (double)(config.LeverRight - config.LeverLeft);
-                    if (normLever < 0) normLever = 0;
-                    if (normLever > 1) normLever = 1;
-                    double leverd = -30000 + 60001 * normLever;
-                    temp.Lever = ((short)leverd);
-                }
-                else
-                {
-                    temp.Lever = data.Lever;
+                    short leverd = (short)map(lever, config.LeverLeft, config.LeverRight, -20000, 20000);
+                    temp.Lever = leverd;
                 }
                 temp.OptButtons = (OptButtons)_inBuffer[12];
                 temp.Aime.Scan = _inBuffer[13];
                 if (temp.Aime.Scan == 1)
                 {
                     byte[] mifareID = new ArraySegment<byte>(_inBuffer, 14, 10).ToArray();
-                    bool flag = true;
+                    bool flag_FF = true;
+                    bool flag_00 = true;
                     for (int i = 0; i < 10; i++)
                     {
                         if (mifareID[i] != 255)
                         {
-                            flag = false;
+                            flag_FF = false;
                             break;
                         }
-                    }
-                    if (flag)
+
+                        if (mifareID[i] != 0)
+                        {
+                            flag_00 = false;
+                            break;
+                        }
+                    };
+
+                    if (flag_FF || flag_00)
                     {
                         mifareID = Utils.ReadOrCreateAimeTxt();
                     }

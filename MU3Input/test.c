@@ -33,12 +33,7 @@
 
 int main()
 {
-    // Check if the library file exists
-    // if (access(PathToLibrary, F_OK) == -1)
-    // {
-    //     puts("Couldn't find library at the specified path");
-    //     return 0;
-    // }
+
     // Call sum function defined in C# shared library
     #ifdef _WIN32
         HINSTANCE handle = LoadLibraryA(PathToLibrary);
@@ -58,11 +53,11 @@ int main()
     setled_f setled = (setled_f)symLoad(handle, "mu3_io_set_led");
 
     uint32_t result = init();
-    printf("%d\n", result);
-    printf("%d\n", version());
-    uint8_t btn = 0;
-    lever(&btn);
-    printf("%d\n", btn);
+    printf("init: %d\n", result);
+    printf("version: %d\n", version());
+    // uint8_t btn = 0;
+    // lever(&btn);
+    // printf("%d\n", btn);
 
 
     // CoreRT libraries do not support unloading

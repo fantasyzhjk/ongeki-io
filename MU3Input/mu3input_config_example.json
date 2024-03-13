@@ -1,0 +1,52 @@
+[
+  {
+    "kbd": {
+      "L1": 65,
+      "L2": 83,
+      "L3": 68,
+      "LSide": 81,
+      "LMenu": 77,
+      "R1": 74,
+      "R2": 75,
+      "R3": 76,
+      "RSide": 79,
+      "RMenu": 78,
+      "Test": 67,
+      "Service": 86,
+      "Coin": 66,
+      "Scan": 13
+    },
+    "Part": "ExceptLever"
+  },
+  {
+    "mouse": {
+      "Max": 32767,
+      "Min": -32768
+    },
+    "Part": "Lever"
+  },
+  {
+    "hid": {
+      "VID": 9025,
+      "PID": 32822,
+      "AutoCal": true,
+      "LeverLeft": 32767,
+      "LeverRight": -32768
+    },
+    "Part": "None"
+  },
+  {
+    "tcp": {
+      "ip": "127.0.0.1",
+      "port": 4300
+    },
+    "Part": "None"
+  },
+  {
+    "udp": {
+      "ip": "127.0.0.1",
+      "port": 4300
+    },
+    "Part": "None"
+  }
+]

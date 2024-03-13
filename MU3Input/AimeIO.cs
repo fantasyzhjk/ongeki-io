@@ -73,7 +73,8 @@ namespace MU3Input
             {
                 id[i] = aime.ID[i];
             }
-
+            Console.WriteLine("aime: {0}",Utils.AimeIDLocal.Value);
+            Utils.AimeIDLocal = null;
             return 0;
         }
 

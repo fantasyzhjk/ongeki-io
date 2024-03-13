@@ -20,6 +20,8 @@ namespace MU3Input
                 return new HidIO(config.hid);
             if (config.kbd is not null)
                 return new KeyboardIO(config.kbd);
+            if (config.mouse is not null)
+                return new MouseIO(config.mouse);
             if (config.tcp is not null)
                 return new TcpIO(config.tcp);
             if (config.udp is not null)
@@ -29,6 +31,7 @@ namespace MU3Input
 
         static Mu3IO()
         {
+            Kernel32.AllocConsole();
             var io = new MixedIO();
             foreach (var ioConfig in Config.Instance.IO)
             {
@@ -115,6 +118,7 @@ namespace MU3Input
         public static void SetLed(uint data)
         {
             IO.SetLed(data);
+            Utils.SetColor(data);
         }
     }
 }

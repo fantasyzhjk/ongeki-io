@@ -25,8 +25,8 @@ namespace MU3Input
         public override void SetLed(uint data) { }
 
 
-        StringBuilder sb = new StringBuilder();
-        bool coinAvailable = true;
+        // StringBuilder sb = new StringBuilder();
+        // bool coinAvailable = true;
         private OutputData GetData()
         {
             // IntPtr handle = User32.GetForegroundWindow();
@@ -53,27 +53,27 @@ namespace MU3Input
             byte testPressed = Pressed(config.Test);
             byte servicePressed = Pressed(config.Service);
             byte coinPressed = Pressed(config.Coin);
-            if (coinPressed > 0)
-            {
-                if (coinAvailable)
-                {
-                    coinAvailable = false;
-                }
-                else
-                {
-                    coinPressed = 0;
-                }
-            }
-            else
-            {
-                coinAvailable = true;
-            }
+            // if (coinPressed > 0)
+            // {
+            //     if (coinAvailable)
+            //     {
+            //         coinAvailable = false;
+            //     }
+            //     else
+            //     {
+            //         coinPressed = 0;
+            //     }
+            // }
+            // else
+            // {
+            //     coinAvailable = true;
+            // }
             // OptButtons optButtons = (OptButtons)(testPressed << 0 | servicePressed << 1 | coinPressed << 2);
             OptButtons optButtons = OptButtons.None;
             if (testPressed > 0) optButtons |= OptButtons.Test;
             if (servicePressed > 0) optButtons |= OptButtons.Service;
             if (coinPressed > 0) optButtons |= OptButtons.Coin;
-            Aime aime = new Aime()
+            Aime aime = new()
             {
                 Scan = Pressed(config.Scan),
                 Data = new byte[18]
@@ -93,7 +93,6 @@ namespace MU3Input
         }
         private byte Pressed(int key)
         {
-
             return User32.GetAsyncKeyState(key) == 0 ? (byte)0 : (byte)1;
         }
  

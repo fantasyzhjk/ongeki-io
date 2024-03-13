@@ -16,7 +16,7 @@ namespace MU3Input
         {
             var location = System.AppContext.BaseDirectory;
             string directoryName = Path.GetDirectoryName(location);
-            configPath = Path.Combine(directoryName, "mu3input_config_zhjk.json");
+            configPath = Path.Combine(directoryName, "mu3input_config.json");
             Console.WriteLine("config_path: {0}", configPath.ToString());
             if (File.Exists(configPath))
             {
@@ -29,10 +29,11 @@ namespace MU3Input
             {
                 IO = new List<IOConfig>()
                 {
-                    new IOConfig() { kbd = new KeyboardIOConfig(), Part = ControllerPart.All },
-                    new IOConfig() { hid = new HidIOConfig(), Part = ControllerPart.All },
-                    new IOConfig() { tcp = new TCPIOConfig(), Part = ControllerPart.All },
-                    new IOConfig() { udp = new UDPIOConfig(), Part = ControllerPart.All },
+                    new IOConfig() { kbd = new KeyboardIOConfig(), Part = ControllerPart.ExceptLever },
+                    new IOConfig() { mouse = new MouseIOConfig(), Part = ControllerPart.Lever },
+                    new IOConfig() { hid = new HidIOConfig(), Part = ControllerPart.None },
+                    new IOConfig() { tcp = new TCPIOConfig(), Part = ControllerPart.None },
+                    new IOConfig() { udp = new UDPIOConfig(), Part = ControllerPart.None },
                 };
                 Save(configPath);
             }
@@ -66,6 +67,11 @@ namespace MU3Input
         public string ip { get; set; } = "127.0.0.1";
         public int port { get; set; } = 4300;
     }
+    public class MouseIOConfig
+    {
+        public short Max { get; set; } = short.MaxValue;
+        public short Min { get; set; } = short.MinValue;
+    }
 
     public class KeyboardIOConfig
     {
@@ -87,15 +93,17 @@ namespace MU3Input
 
     public class HidIOConfig
     {
+        public ushort VID { get; set; } = 0x2341;
+        public ushort PID { get; set; } = 0x8036;
         public bool AutoCal { get; set; } = true;
         public short LeverLeft { get; set; } = short.MaxValue;
         public short LeverRight { get; set; } = short.MinValue;
-        public bool InvertLever { get; set; } = true;
     }
 
     public class IOConfig
     {
         public KeyboardIOConfig kbd { get; set; }
+        public MouseIOConfig mouse { get; set; }
         public HidIOConfig hid { get; set; }
         public TCPIOConfig tcp { get; set; }
         public UDPIOConfig udp { get; set; }
@@ -108,6 +116,7 @@ namespace MU3Input
     [JsonSerializable(typeof(IOConfig))]
     [JsonSerializable(typeof(HidIOConfig))]
     [JsonSerializable(typeof(KeyboardIOConfig))]
+    [JsonSerializable(typeof(MouseIOConfig))]
     [JsonSerializable(typeof(TCPIOConfig))]
     [JsonSerializable(typeof(UDPIOConfig))]
     [JsonSerializable(typeof(int))]

@@ -10,6 +10,7 @@ namespace MU3Input
     public class MixedIO : IO
     {
         public override bool IsConnected => true;
+
         public override void Reconnect()
         {
             foreach (var item in Items)
@@ -17,6 +18,7 @@ namespace MU3Input
                 item.Key.Reconnect();
             }
         }
+
         public Dictionary<IO, ControllerPart> Items { get; }
         public override OutputData Data
         {
@@ -25,7 +27,9 @@ namespace MU3Input
                 var buttons = new byte[10];
                 for (int i = 0; i < 10; i++)
                 {
-                    var io = Items.FirstOrDefault(item => item.Value.HasFlag((ControllerPart)(1 << i))).Key;
+                    var io = Items
+                        .FirstOrDefault(item => item.Value.HasFlag((ControllerPart)(1 << i)))
+                        .Key;
                     buttons[i] = io == null ? (byte)0 : io.Data.Buttons[i];
                 }
                 short lever = default;
@@ -40,12 +44,20 @@ namespace MU3Input
                     if (!item.Key.IsConnected)
                         item.Key.Reconnect();
                 }
+                var optBtns = Items
+                    .Select(item => item.Key.Data.OptButtons)
+                    .Aggregate((item1, item2) => item1 | item2);
+                if (optBtns != OptButtons.None)
+                    Console.WriteLine(optBtns);
+                var aime = new Aime() { Scan = 0, Data = new byte[18] };
+                if (aimeIO is not null)
+                    aime = aimeIO.Aime;
                 var data = new OutputData
                 {
                     Buttons = buttons,
                     Lever = lever,
-                    Aime = aimeIO?.Aime ?? default,
-                    OptButtons = Items.Select(item => item.Key.Data.OptButtons).Aggregate((item1, item2) => item1 | item2),
+                    Aime = aime,
+                    OptButtons = optBtns,
                 };
                 return data;
             }
@@ -56,7 +68,6 @@ namespace MU3Input
             Items = new Dictionary<IO, ControllerPart>();
         }
 
-
         public void Add(IO io, ControllerPart part)
         {
             if (Check(part, Items.Select(i => i.Value).ToArray()))
@@ -64,6 +75,7 @@ namespace MU3Input
                 Items.Add(io, part);
             }
         }
+
         public void Remove(IO io)
         {
             Items.Remove(io);
@@ -80,16 +92,19 @@ namespace MU3Input
 
         public bool Check(ControllerPart part1, params ControllerPart[] parts)
         {
-            if (parts.Length == 0) return true;
+            if (parts.Length == 0)
+                return true;
             ControllerPart part2 = parts.Aggregate((p1, p2) => p1 | p2);
             return (part1 & part2) == ControllerPart.None;
         }
 
         private uint currentLedData = 0;
+
         public override void SetLed(uint data)
         {
             currentLedData = data;
-            foreach (IO io in Items.Keys) io.SetLed(currentLedData);
+            foreach (IO io in Items.Keys)
+                io.SetLed(currentLedData);
         }
     }
 }
