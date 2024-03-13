@@ -359,8 +359,6 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-# Fody - auto-generated XML schema
-FodyWeavers.xsd
-/mu3controller/.vscode
-
 a.exe
+mu3input_config.json
+aime.txt
