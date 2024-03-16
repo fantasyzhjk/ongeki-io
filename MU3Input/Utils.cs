@@ -67,5 +67,16 @@ namespace MU3Input
             }
             return aimeId;
         }
+
+        public static string PwStrToString(Windows.Win32.Foundation.PWSTR str)
+        {
+            unsafe
+            {
+                return ((ulong)str.Value & 0xFFFF0000) == 0 ?
+                    ((ulong)str.Value).ToString() :
+                    str.AsSpan().ToString();
+            }
+        }
+
     }
 }

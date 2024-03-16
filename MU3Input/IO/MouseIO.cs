@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Win32;
 
 namespace MU3Input
 {
@@ -27,7 +28,7 @@ namespace MU3Input
 
         private OutputData GetData()
         {
-            User32.GetCursorPos(out var lpPoint);
+            PInvoke.GetCursorPos(out var lpPoint);
             var lever = (short)lpPoint.X;
             if (lever < config.Min)
             {

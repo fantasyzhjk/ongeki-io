@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Win32;
 
 namespace MU3Input
 {
@@ -25,12 +26,12 @@ namespace MU3Input
         public override void SetLed(uint data) { }
 
 
-        // StringBuilder sb = new StringBuilder();
+        // Windows.Win32.Foundation.PWSTR sb = null;
         // bool coinAvailable = true;
         private OutputData GetData()
         {
-            // IntPtr handle = User32.GetForegroundWindow();
-            // User32.GetWindowText(handle, sb, 16);
+            // var handle = PInvoke.GetForegroundWindow();
+            // PInvoke.GetWindowText(handle, sb, 16);
             // string windowText = sb.ToString();
             // if (windowText != "Otoge" && windowText != "Ongeki IO Debug")
             // {
@@ -93,7 +94,7 @@ namespace MU3Input
         }
         private byte Pressed(int key)
         {
-            return User32.GetAsyncKeyState(key) == 0 ? (byte)0 : (byte)1;
+            return PInvoke.GetAsyncKeyState(key) == 0 ? (byte)0 : (byte)1;
         }
  
     }

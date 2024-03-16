@@ -37,7 +37,7 @@ namespace MU3Input
 
             _openCount = _hid.Open(1, config.VID, config.PID);
             if (_openCount != 0) {
-                Console.WriteLine("已连接 {}", _openCount);
+                Console.WriteLine("已连接 {0}", _openCount);
             }
         }
 
@@ -161,8 +161,8 @@ namespace MU3Input
             }
 
             var outBuffer = new byte[64];
-            fixed (void* d = outBuffer)
-                Kernel32.CopyMemory(d, &led, 64);
+            var p = &led;
+            Marshal.Copy((nint)p, outBuffer, 0, sizeof(SetLedInput));
 
             _hid.Send(0, outBuffer, 64, 1000);
         }

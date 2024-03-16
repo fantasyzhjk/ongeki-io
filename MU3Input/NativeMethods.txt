@@ -1,0 +1,8 @@
+GetForegroundWindow
+GetWindowText
+GetAsyncKeyState
+GetCursorPos
+GetPrivateProfileString
+WritePrivateProfileString
+AllocConsole
+FreeConsole

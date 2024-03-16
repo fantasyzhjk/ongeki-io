@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using Windows.Win32;
 
 namespace MU3Input
 {
@@ -31,7 +32,7 @@ namespace MU3Input
 
         static Mu3IO()
         {
-            Kernel32.AllocConsole();
+            PInvoke.AllocConsole();
             var io = new MixedIO();
             foreach (var ioConfig in Config.Instance.IO)
             {
